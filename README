@@ -1,0 +1,44 @@
+RESOURCES
+**************************************************
+> Stack of size 1000
+> A boolean flag
+> An error flag
+> A program counter
+> A general purpose register
+
+INSTRUCTIONS WITHOUT ARGS
+**************************************************
+READ	    - read byte from stdin to top of stack
+WRT 	    - write byte to stdout from top of 
+	      stack
+ADD 	    - add top 2 elems of stack and put sum
+	      in stack
+SUB 	    - subtract topmost element by 2nd 
+	      topmost element from stack and put
+	      difference in top of stack
+MUL 	    - multiply top 2 elems os stack and 
+	      put product in top of stack
+DIV 	    - Divide topmost elem by 2nd topmost
+	      elem and put quotient in top of 
+	      stack and remainder below top.
+POP 	    - pop topmost elem from stack
+EQU 	    - if top 2 elems are equal boolean 
+	      flag set to 1 else 0
+GRT 	    - is top is greater than second top 
+	      boolean flag set to 1 else 0
+LST 	    - is top is smaller than second top 
+	      boolean flag set to 1 else 0
+GOTO 	    - go to instruction number given by 
+	      top of stack.
+GOIF        - like GOTO but only if boolean flag 
+	      set.
+GOUN        - like GOTO but only if boolean flag 
+	      not set.
+END	    - end execution.
+LOAD	    - POP from stack and put byte in 
+	      general purpose register.
+STORE	    - PUSH register byte to stack.
+
+INSTRUCTIONS WITH ARGS
+**************************************************
+PUSH        - push a byte to top of stack.

@@ -1,0 +1,15 @@
+;_returns_0A_if_number_is_odd_and_0B_if_number_is_even
+PUSH 02
+READ
+DIV
+POP
+PUSH 00
+EQU
+PUSH 0F
+GOIF
+PUSH 0A
+WRT
+END
+PUSH 0B
+WRT
+END

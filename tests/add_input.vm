@@ -1,0 +1,6 @@
+;_Input_2_numbers_and_add_and_print_the_result
+READ
+READ
+ADD
+WRT
+END
