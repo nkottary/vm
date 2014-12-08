@@ -1,22 +1,28 @@
 #include "constants.h"
 
 const INS INST_SET[] = {
-  {"READ", 0x00},
-  {"WRT", 0x01},
-  {"ADD", 0x02},
-  {"SUB", 0x03},
-  {"MUL", 0x04},
-  {"DIV", 0x05},
-  {"POP", 0x06},
-  {"EQU", 0x07},
-  {"GRT", 0x08},
-  {"LST", 0x09},
-  {"GOTO", 0x0A},
-  {"GOIF", 0x0B},
-  {"GOUN", 0x0C},
-  {"END", 0x0D},
-  {"PUSH", 0x0E},
-  {"ERR", 0x0F}
+  {"REAH", 0x00},
+  {"READ", 0x01},
+  {"REAC", 0x02},
+  {"WRTH", 0x03},
+  {"WRTD", 0x04},
+  {"WRTC", 0x05},
+  {"ADD", 0x06},
+  {"SUB", 0x07},
+  {"MUL", 0x08},
+  {"DIV", 0x09},
+  {"POP", 0x0A},
+  {"EQU", 0x0B},
+  {"GRT", 0x0C},
+  {"LST", 0x0D},
+  {"GOTO", 0x0E},
+  {"GOIF", 0x0F},
+  {"GOUN", 0x10},
+  {"END", 0x11},
+  {"DUP", 0x12},
+  {"FLIP", 0x13},
+  {"PUSH", 0x14},
+  {"ERR", 0x15}
 };
 
 symbol_t get_inst (bytecode_t bytecode) {

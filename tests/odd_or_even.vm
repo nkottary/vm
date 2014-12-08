@@ -1,15 +1,29 @@
-;_returns_0A_if_number_is_odd_and_0B_if_number_is_even
+;_Checks_if_entered_number_is_odd_or_even
 PUSH 02
 READ
 DIV
 POP
 PUSH 00
 EQU
-PUSH 0F
+PUSH 18
 GOIF
 PUSH 0A
-WRT
+PUSH 64
+PUSH 64
+PUSH 4F
+WRTC
+WRTC
+WRTC
+WRTC
 END
-PUSH 0B
-WRT
+PUSH 0A
+PUSH 6E
+PUSH 65
+PUSH 76
+PUSH 45
+WRTC
+WRTC
+WRTC
+WRTC
+WRTC
 END

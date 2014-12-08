@@ -1,11 +1,15 @@
 #define MAX_CODE_LEN 1000
-#define N_INST 15
+#define N_INST 21
 
 typedef unsigned char bytecode_t;
 
 typedef enum {
+  REAH,
   READ,
-  WRT,
+  REAC,
+  WRTH,
+  WRTD,
+  WRTC,
   ADD,
   SUB,
   MUL,
@@ -18,6 +22,8 @@ typedef enum {
   GOIF,
   GOUN,
   END,
+  DUP,
+  FLIP,
   PUSH,
   ERR
 } symbol_t;
