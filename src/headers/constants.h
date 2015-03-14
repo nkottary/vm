@@ -1,3 +1,6 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
 #define MAX_CODE_LEN 1000
 #define N_INST 21
 
@@ -33,9 +36,16 @@ struct INS {
   bytecode_t bytecode;
 };
 
+typedef enum {
+    FALSE,
+    TRUE
+} bool_flag_t;
+
 typedef struct INS INS;
 
 const INS INST_SET[N_INST + 1];
 
 symbol_t get_inst (bytecode_t bc);
 bytecode_t get_bytecode (char *inst);
+
+#endif

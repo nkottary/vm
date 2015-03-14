@@ -1,13 +1,13 @@
+#include "enums.h"
+
+#ifndef STACK_H
+#define STACK_H
+
 #define MAX_STACK 100
 
-typedef enum {
-  FAILURE,
-  SUCCESS
-} status_t;
-
 struct STACK {
-  void* elems[MAX_STACK];
-  int top;
+    void* elems[MAX_STACK];
+    int top;
 };
 
 typedef struct STACK Stack;
@@ -20,3 +20,4 @@ void *pop (Stack *stk);
 void *top (Stack *stk);
 void freeStack(Stack *stk);
 
+#endif
