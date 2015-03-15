@@ -34,18 +34,21 @@ $(DEBUG_DIR)/constants.o: $(HEADER_DIR)/constants.h $(SRC_DIR)/constants.c
 dependencies_dbg: $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o
 
 $(DEBUG_DIR)/compiler_dbg: $(SRC_DIR)/compiler.c $(DEBUG_DIR)/constants.o
-	gcc $(SRC_DIR)/compiler.c $(DEBUG_DIR)/constants.o -o $(DEBUG_DIR)/compiler_dbg
+	gcc -g $(SRC_DIR)/compiler.c $(DEBUG_DIR)/constants.o -o $(DEBUG_DIR)/compiler_dbg
 
 $(DEBUG_DIR)/decompiler_dbg: $(SRC_DIR)/decompiler.c $(DEBUG_DIR)/constants.o
-	gcc $(SRC_DIR)/decompiler.c $(DEBUG_DIR)/constants.o -o $(DEBUG_DIR)/decompiler_dbg
+	gcc -g $(SRC_DIR)/decompiler.c $(DEBUG_DIR)/constants.o -o $(DEBUG_DIR)/decompiler_dbg
 
 $(DEBUG_DIR)/vm_dbg: $(SRC_DIR)/vm.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o
-	gcc $(SRC_DIR)/vm.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o -o $(DEBUG_DIR)/vm_dbg
+	gcc -g $(SRC_DIR)/vm.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o -o $(DEBUG_DIR)/vm_dbg
 
 $(DEBUG_DIR)/simple_parser_dbg: $(SRC_DIR)/simple_parser.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o
-	gcc $(SRC_DIR)/simple_parser.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o -o $(DEBUG_DIR)/simple_parser_dbg
+	gcc -g $(SRC_DIR)/simple_parser.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o -o $(DEBUG_DIR)/simple_parser_dbg
 
 debug: $(DEBUG_DIR)/compiler_dbg $(DEBUG_DIR)/decompiler_dbg $(DEBUG_DIR)/vm_dbg $(DEBUG_DIR)/simple_parser_dbg
 
 clean:
-	rm $(BUILD_DIR)/* $(DEBUG_DIR)/*
+	rm $(BUILD_DIR)/* 
+
+clean_dbg:
+	rm $(DEBUG_DIR)/*

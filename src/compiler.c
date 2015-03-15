@@ -22,12 +22,30 @@ int main (int argc, char *argv[])
         pc = 0;
 
     while (!feof(fp)) {
-        if (fscanf(fp, "%s", inst) == -1 || inst[0] == ';') continue;
-        if (strcmp(inst, "PUSH") == 0) {
+        if (fscanf(fp, "%s", inst) == -1) {
+            continue;
+        }
+        else if (strcmp(inst, "/*") == 0) {
+            while (!feof(fp)) {
+                fscanf(fp, "%s", inst);
+                if (strcmp(inst, "*/") == 0) {
+                    break;
+                }
+            }
+        }
+        else if (strcmp(inst, "PUSH") == 0) {
             compiled_code[pc++] = INST_SET[PUSH].bytecode;
             if (!feof(fp)) {
                 unsigned int arg;
-                fscanf(fp, "%02x", &arg);
+                int len = 0;
+                fscanf(fp, "%s", inst);
+                len = strlen(inst);
+                if (inst[len - 1] == 'h') {
+                    inst[len - 1] = '\0';
+                    sscanf(inst, "%02x", &arg);
+                } else {
+                    sscanf(inst, "%u", &arg);                    
+                }
                 compiled_code[pc++] = (bytecode_t) arg;
             } else {
                 printf("\nERROR: PUSH not given an argument in"
@@ -37,8 +55,8 @@ int main (int argc, char *argv[])
         } else {
             bytecode_t bc = get_bytecode(inst);
             if (bc == INST_SET[ERR].bytecode) {
-                printf("\nERROR: unrecognized byte code in"
-                       " byte number %d\n", pc);
+                printf("\nERROR: unrecognized instruction %s in"
+                       " byte number %d\n", inst, pc);
                 return 0;
             }
             compiled_code[pc++] = bc;

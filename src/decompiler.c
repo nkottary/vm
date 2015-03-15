@@ -5,7 +5,6 @@
 
 int main (int argc, char *argv[]) 
 { 
-
     if (argc != 2 && argc != 3) {
         printf("\nUSAGE: interpreter <vmc file>\n");
         return 0;
@@ -40,7 +39,9 @@ int main (int argc, char *argv[])
         if (inst == PUSH) {
             char hex_num[20];
             strcat(src, " ");
-            sprintf(hex_num, "%02x\n", compiled_code[++ i]);
+            i++;
+            sprintf(hex_num, "%02xh /* %d */\n", compiled_code[i], 
+                    compiled_code[i]);
             strcat(src, hex_num);
         } else {
             strcat(src, "\n");

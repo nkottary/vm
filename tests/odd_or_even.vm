@@ -1,26 +1,26 @@
-;_Checks_if_entered_number_is_odd_or_even
-PUSH 02
+/* Checks if entered number is odd or even */
+PUSH 02h
 READ
 DIV
 POP
-PUSH 00
+PUSH 00h
 EQU
-PUSH 18
+PUSH 18h
 GOIF
-PUSH 0A
-PUSH 64
-PUSH 64
-PUSH 4F
+PUSH 0Ah
+PUSH 64h
+PUSH 64h
+PUSH 4Fh
 WRTC
 WRTC
 WRTC
 WRTC
 END
-PUSH 0A
-PUSH 6E
-PUSH 65
-PUSH 76
-PUSH 45
+PUSH 0Ah
+PUSH 6Eh
+PUSH 65h
+PUSH 76h
+PUSH 45h
 WRTC
 WRTC
 WRTC
