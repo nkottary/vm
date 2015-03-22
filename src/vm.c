@@ -1,3 +1,10 @@
+/**
+ * vm.c
+ * Purpose: Interpret a .vmc file.
+ *
+ * @author Nishanth H. Kottary
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
@@ -289,9 +296,12 @@ int main (int argc, char *argv[])
                 error_flag = NO_ERROR;
             }
             break;
+            
+        case NOP:
+            break;
 
         default:
-            printf("\n Unexpected byte code error at"
+            printf("\n Unexpected or invalid byte code at"
                    " instruction %d .. exiting\n", pc);
             freeStack(stk);
             return 0;

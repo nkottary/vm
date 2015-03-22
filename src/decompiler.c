@@ -1,3 +1,11 @@
+/**
+ * decompiler.c
+ * Purpose: Convert the bytecode in a .vmc file to their equivalent string
+ *          representation.
+ *
+ * @author Nishanth H. Kottary
+ */
+
 #include <stdio.h>
 #include <string.h>
 

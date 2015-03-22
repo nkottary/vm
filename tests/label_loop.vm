@@ -1,0 +1,19 @@
+/* Simple loop implementation using labels
+ */
+PUSH 10
+PUSH  1
+:start
+DUP
+WRTD
+PUSH 2Ch /* comma character */
+WRTC
+PUSH 20h /* space character */
+WRTC
+EQU
+PUSH 16h
+GOIF
+PUSH  1
+ADD
+jump start
+PUSH 0Ah
+WRTC

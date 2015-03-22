@@ -50,14 +50,51 @@ DUP         - Duplicate the topmost element on
 	      the stack.
 FLIP        - Flip the top two elements on the 
 	      stack.
+NOP         - No operation.
 ```
 ## Instructions with arguments
 
 ```
-PUSH        - push a byte to top of stack.
+PUSH        - push a byte to top of stack. Byte may
+              be entered as a decimal or a hexadecimal 
+              with a suffix 'h'.
 ```
 
-See the sample programs in tests directory.
+## Bytecodes used for compiler hints
+
+```
+LAB         - Defines a label at this point.
+JMP         - Defines a jump to a label indexed by the
+              next byte.
+```
+
+In a second pass of compilation LAB is replaced by NOP
+and JMP is compiled to PUSH <instruction-to-jump-to> 
+GOTO.
+
+## High level instructions
+
+These instructions are compiled to byte code
+
+### Labels:
+
+A label can be defined with the ':' character, and can be 
+jumped to with jump <label-name>, for example-
+
+```
+....code....
+:start  /* Definition of a label. */
+....code....
+jump start /* Jump to label */
+```
+
+More High level instrcutions to be added.
+
+## C-style comments
+
+Comments can be written between /* */, there should
+be a space after /* and before */. Comments can be 
+multi-line.
 
 ## How to run the example programs
 
@@ -68,4 +105,8 @@ First compile file to byte code.
 Then run the compiled .vmc file in the vm.
 ```
 ./vm hw.vmc
+```
+To decompile the code to a .vm file use decompiler.
+```
+./decompiler hw.vmc
 ```

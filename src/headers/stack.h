@@ -1,3 +1,9 @@
+/**
+ * stack.h
+ *
+ * @author Nishanth H. Kottary
+ */
+
 #include "enums.h"
 
 #ifndef STACK_H
