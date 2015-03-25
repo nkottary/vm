@@ -5,8 +5,7 @@ DIV
 POP
 PUSH 00h
 EQU
-PUSH 2Dh
-GOIF
+jumpif even
 PUSH 0Ah
 PUSH 64h
 PUSH 64h
@@ -16,6 +15,7 @@ WRTC
 WRTC
 WRTC
 END
+:even
 PUSH 0Ah
 PUSH 6Eh
 PUSH 65h

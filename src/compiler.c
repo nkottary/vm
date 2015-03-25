@@ -18,6 +18,12 @@
 #define LABEL_LEN     10
 #define MAX_LINE_LEN  80
 
+typedef enum JUMP_T {
+    JUMP,
+    JUMPIF,
+    JUMPUN
+} jump_t;
+
 typedef struct LABEL_T {
     char label[LABEL_LEN];
     bytecode_t line_num;
@@ -176,8 +182,7 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
     const char delim[] = " \n";
 
     bytecode_t line_num =    0,
-               pc =          0,
-               label_count = 0;
+               pc =          0;
 
     if (fgets(line, MAX_LINE_LEN, fp) == NULL) { /* Nothing to do. */
         return SUCCESS;
@@ -194,9 +199,15 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
                  * resolved.
                  */
                 compiled_code[pc++] = INST_SET[LAB].bytecode;
-                label_count++;
             }
-            else if (strcmp(token, "jump") == 0) {
+            else if (strncmp(token, "jump", 4) == 0) {
+                jump_t flag = JUMP;
+                if (strcmp(token, "jumpif") == 0) {
+                    flag = JUMPIF;
+                } else if (strcmp(token, "jumpun") == 0) {
+                    flag = JUMPUN;
+                }
+
                 token = strtok_r(NULL, delim, &checkpoint);
                 if (token == NULL) {
                     fprintf(stderr, "\nERROR: Jump not given a label in line "
@@ -209,7 +220,7 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
                     return FAILURE;
                 }
                 const label_t *found_label = 
-                    vm_search_label_table(token, label_table, label_count);
+                    vm_search_label_table(token, label_table, lt_len);
 
                 if (found_label == NULL) {
                     fprintf(stderr, "\nERROR: Jump label not found"
@@ -225,7 +236,14 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
                 compiled_code[pc++] = 0;
                 compiled_code[pc++] = 0;
                 compiled_code[pc++] = 0;
-                compiled_code[pc++] = INST_SET[GOTO].bytecode;
+                if (flag == JUMPIF) {
+                    compiled_code[pc] = INST_SET[GOIF].bytecode;
+                } else if (flag == JUMPUN) {
+                    compiled_code[pc] = INST_SET[GOUN].bytecode;
+                } else {
+                    compiled_code[pc] = INST_SET[GOTO].bytecode;
+                }
+                pc++;
             }
             else if (strcmp(token, "/*") == 0) {
 
@@ -390,7 +408,7 @@ int main (int argc, char *argv[])
 
     if (vm_compile_second_pass(compiled_code, code_len, label_table, 
                                label_count) == FAILURE) {
-        fprintf(stderr, "\nERROR: Compilation failed in first pass.");
+        fprintf(stderr, "\nERROR: Compilation failed in second pass.");
         exit(EXIT_FAILURE);
     }
 

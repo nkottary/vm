@@ -1,6 +1,7 @@
 /* Print numbers from 1 to 10 */
 PUSH  Ah
 PUSH  1h
+:start
 DUP           /* pc = Ah */
 WRTD
 PUSH 2Ch
@@ -8,11 +9,10 @@ WRTC
 PUSH 20h
 WRTC
 EQU
-PUSH 2Bh
-GOIF
+jumpif end
 PUSH  1h
 ADD
-PUSH  Ah
-GOTO
+jump start
+:end
 PUSH  Ah      /* pc = 2BH */
 WRTC
