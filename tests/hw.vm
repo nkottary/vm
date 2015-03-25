@@ -1,5 +1,5 @@
 /* Hello world program */
-PUSH 0Ah
+PUSH  Ah
 PUSH 21h
 PUSH 44h
 PUSH 4Ch
@@ -12,7 +12,7 @@ PUSH 4Ch
 PUSH 4Ch
 PUSH 45h
 PUSH 48h
-PUSH 0Ah
+PUSH  Ah
 WRTC
 WRTC
 WRTC

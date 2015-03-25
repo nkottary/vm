@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "headers/constants.h"
 
@@ -46,10 +47,12 @@ int main (int argc, char *argv[])
         strcat(src, INST_SET[inst].name);
         if (inst == PUSH) {
             char hex_num[20];
+            int push_arg = 0;
+            assert( (i + 4) < n_insts);
+            vm_get_integer_from_bytecode(&compiled_code[i + 1], &push_arg);
+            i += 3;
             strcat(src, " ");
-            i++;
-            sprintf(hex_num, "%02xh /* %d */\n", compiled_code[i], 
-                    compiled_code[i]);
+            sprintf(hex_num, "%08xh /* %d */\n", push_arg, push_arg);
             strcat(src, hex_num);
         } else {
             strcat(src, "\n");

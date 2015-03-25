@@ -1,18 +1,18 @@
 /* Print numbers from 1 to 10 */
-PUSH 0Ah
-PUSH 01h
-DUP
+PUSH  Ah
+PUSH  1h
+DUP           /* pc = Ah */
 WRTD
 PUSH 2Ch
 WRTC
 PUSH 20h
 WRTC
 EQU
-PUSH 16h
+PUSH 2Bh
 GOIF
-PUSH 01h
+PUSH  1h
 ADD
-PUSH 04h
+PUSH  Ah
 GOTO
-PUSH 0Ah
+PUSH  Ah      /* pc = 2BH */
 WRTC

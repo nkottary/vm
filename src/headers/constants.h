@@ -8,6 +8,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include "enums.h"
+
 #define MAX_CODE_LEN 1000
 
 typedef unsigned char bytecode_t;
@@ -68,5 +70,9 @@ const INS INST_SET[N_INST];
 
 symbol_t get_inst (bytecode_t bc);
 bytecode_t get_bytecode (char *inst);
+status_t vm_get_integer_from_bytecode (const bytecode_t *compiled_code_ptr,
+                                       int *int_val);
+status_t vm_put_integer_to_bytecode (bytecode_t *compiled_code_ptr,
+                                     const int int_val);
 
 #endif

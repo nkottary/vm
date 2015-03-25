@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
+#include <assert.h>
 
 #include "headers/constants.h"
 #include "headers/stack.h"
@@ -30,7 +31,7 @@ int main (int argc, char *argv[])
     Stack *stk = newStack();
     bytecode_t pc = 0;
     int error_flag = NO_ERROR, bool_flag = 0, input;
-    bytecode_t *byte, *num1, *num2;
+    int *stack_val, *num1, *num2;
 
     fread(&n_insts, sizeof (bytecode_t), 1, fp);
     fread(compiled_code, sizeof (bytecode_t), n_insts, fp);
@@ -40,11 +41,10 @@ int main (int argc, char *argv[])
         symbol_t inst = get_inst(compiled_code[pc]);
         switch (inst) {
         case REAH:
-            byte = (bytecode_t *)
-                malloc(sizeof(bytecode_t));
-            scanf("%02x", &input);
-            *byte = input;
-            if (push(stk, (void *)byte) == FAILURE) {
+            stack_val = (int *)malloc(sizeof(int));
+            scanf("%08x", &input);
+            *stack_val = input;
+            if (push(stk, (void *)stack_val) == FAILURE) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
@@ -52,11 +52,10 @@ int main (int argc, char *argv[])
             break;
 
         case READ:
-            byte = (bytecode_t *)
-                malloc(sizeof(bytecode_t));
+            stack_val = (int *)malloc(sizeof(int));
             scanf("%d", &input);
-            *byte = input;
-            if (push(stk, (void *)byte) == FAILURE) {
+            *stack_val = input;
+            if (push(stk, (void *)stack_val) == FAILURE) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
@@ -64,11 +63,10 @@ int main (int argc, char *argv[])
             break;
 
         case REAC:
-            byte = (bytecode_t *)
-                malloc(sizeof(bytecode_t));
+            stack_val = (int *)malloc(sizeof(int));
             scanf("%c", (char *)&input);
-            *byte = input;
-            if (push(stk, (void *)byte) == FAILURE) {
+            *stack_val = input;
+            if (push(stk, (void *)stack_val) == FAILURE) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
@@ -76,41 +74,41 @@ int main (int argc, char *argv[])
             break;
 
         case WRTH:
-            byte = pop(stk);
-            if (byte) {
-                printf("%02x", *byte);
+            stack_val = pop(stk);
+            if (stack_val) {
+                printf("%08x", *stack_val);
                 error_flag = NO_ERROR;
-                free(byte);
+                free(stack_val);
             } else {
                 error_flag = ERROR;
             }
             break;
 
         case WRTD:
-            byte = pop(stk);
-            if (byte) {
-                printf("%d", *byte);
+            stack_val = pop(stk);
+            if (stack_val) {
+                printf("%d", *stack_val);
                 error_flag = NO_ERROR;
-                free(byte);
+                free(stack_val);
             } else {
                 error_flag = ERROR;
             }
             break;
 
         case WRTC:
-            byte = pop(stk);
-            if (byte) {
-                printf("%c", *byte);
+            stack_val = pop(stk);
+            if (stack_val) {
+                printf("%c", *stack_val);
                 error_flag = NO_ERROR;
-                free(byte);
+                free(stack_val);
             } else {
                 error_flag = ERROR;
             }
             break;
 
         case ADD:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -121,8 +119,8 @@ int main (int argc, char *argv[])
             break;
 
         case SUB:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -133,8 +131,8 @@ int main (int argc, char *argv[])
             break;
 
         case MUL:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -145,12 +143,12 @@ int main (int argc, char *argv[])
             break;
 
         case DIV:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
-                bytecode_t _num1, _num2;
+                int _num1, _num2;
                 _num1 = *num1;
                 _num2 = *num2;
                 *num1 = _num1 / _num2;
@@ -161,18 +159,18 @@ int main (int argc, char *argv[])
             break;
 
         case POP:
-            byte = pop(stk);
-            if (byte == 0) {
+            stack_val = pop(stk);
+            if (stack_val == 0) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
-                free(byte);
+                free(stack_val);
             }
             break;
 
         case EQU:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -187,8 +185,8 @@ int main (int argc, char *argv[])
             break;
 
         case GRT:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -203,8 +201,8 @@ int main (int argc, char *argv[])
             break;
 
         case LST:
-            num1 = (bytecode_t *)pop(stk);
-            num2 = (bytecode_t *)top(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -219,39 +217,39 @@ int main (int argc, char *argv[])
             break;
 
         case GOTO:
-            byte = pop(stk);
-            if (byte == 0 || *byte > n_insts - 1) {
+            stack_val = (int *)pop(stk);
+            if (stack_val == 0 || *stack_val > n_insts - 1) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
-                pc = *byte - 1;
-                free(byte);
+                pc = *stack_val - 1;
+                free(stack_val);
             }
             break;
 
         case GOIF:
-            byte = pop(stk);
-            if (byte == 0 || *byte > n_insts - 1) {
+            stack_val = (int *)pop(stk);
+            if (stack_val == 0 || *stack_val > n_insts - 1) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
                 if (bool_flag == TRUE) {
-                    pc = *byte - 1;
+                    pc = *stack_val - 1;
                 }
-                free(byte);
+                free(stack_val);
             }
             break;
 
         case GOUN:
-            byte = pop(stk);
-            if (byte == 0 || *byte > n_insts - 1) {
+            stack_val = (int *)pop(stk);
+            if (stack_val == 0 || *stack_val > n_insts - 1) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;
                 if (bool_flag == FALSE) {
-                    pc = *byte - 1;
+                    pc = *stack_val - 1;
                 }
-                free(byte);
+                free(stack_val);
             }
             break;
 
@@ -260,9 +258,8 @@ int main (int argc, char *argv[])
             return 0;
 
         case DUP:
-            num1 = top(stk);
-            num2 = (bytecode_t *)
-                malloc(sizeof(bytecode_t *));
+            num1 = (int *)top(stk);
+            num2 = (int *)malloc(sizeof(int *));
             if (num1 == 0) {
                 error_flag = ERROR;
             } else {
@@ -275,8 +272,8 @@ int main (int argc, char *argv[])
             break;
 
         case FLIP:
-            num1 = pop(stk);
-            num2 = pop(stk);
+            num1 = (int *)pop(stk);
+            num2 = (int *)pop(stk);
             if (num1 == 0 || num2 == 0) {
                 error_flag = ERROR;
             } else {
@@ -287,10 +284,11 @@ int main (int argc, char *argv[])
             break;
 
         case PUSH:
-            byte = (bytecode_t *)
-                malloc(sizeof(bytecode_t *));
-            *byte = compiled_code[++ pc];
-            if (push(stk, (void *)byte) == FAILURE) {
+            stack_val = (int *)malloc(sizeof(int *));
+            vm_get_integer_from_bytecode(&compiled_code[pc + 1], stack_val);
+            pc += 4;
+            assert(pc < n_insts);
+            if (push(stk, (void *)stack_val) == FAILURE) {
                 error_flag = ERROR;
             } else {
                 error_flag = NO_ERROR;

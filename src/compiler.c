@@ -219,6 +219,12 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
 
                 compiled_code[pc++] = INST_SET[JMP].bytecode;
                 compiled_code[pc++] = found_label->id;
+                /*
+                 * Making room for 32-bit integer argument to push
+                 */
+                compiled_code[pc++] = 0;
+                compiled_code[pc++] = 0;
+                compiled_code[pc++] = 0;
                 compiled_code[pc++] = INST_SET[GOTO].bytecode;
             }
             else if (strcmp(token, "/*") == 0) {
@@ -253,7 +259,7 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
             else if (strcmp(token, "PUSH") == 0) {
                 compiled_code[pc++] = INST_SET[PUSH].bytecode;
                 if (!feof(fp)) {
-                    unsigned int arg = 0;
+                    int arg = 0;
                     int len = 0;
                     int old_line_num = line_num;
                     token = strtok_r(NULL, delim, &checkpoint);
@@ -271,11 +277,12 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, FILE *fp,
                     len = strlen(token);
                     if (token[len - 1] == 'h') {
                         token[len - 1] = '\0';
-                        sscanf(token, "%02x", &arg);
+                        sscanf(token, "%x", &arg);
                     } else {
-                        sscanf(token, "%u", &arg);                    
+                        sscanf(token, "%d", &arg);                    
                     }
-                    compiled_code[pc++] = (bytecode_t)arg;
+                    vm_put_integer_to_bytecode(&compiled_code[pc], arg);
+                    pc += 4;
                 } else {
                     fprintf(stderr, "\nERROR: PUSH not given an argument in"
                             " line number %d\n", line_num);
@@ -319,8 +326,7 @@ status_t vm_compile_second_pass (bytecode_t *compiled_code, const int code_len,
 
     for (i = 0; i < code_len; i++) {
         if (compiled_code[i] == INST_SET[PUSH].bytecode) {
-            i++; /* Skip the argument to PUSH. */
-            assert(i < code_len);
+            i += 4; /* Skip the argument to PUSH. */
         }
         else if (compiled_code[i] == INST_SET[LAB].bytecode) {
             compiled_code[i] = INST_SET[NOP].bytecode;
@@ -334,8 +340,7 @@ status_t vm_compile_second_pass (bytecode_t *compiled_code, const int code_len,
 
     for (i = 0; i < code_len; i++) {
         if (compiled_code[i] == INST_SET[PUSH].bytecode) {
-            i++; /* Skip the argument to PUSH. */
-            assert(i < code_len);
+            i += 4; /* Skip the argument to PUSH. */
         }
         else if (compiled_code[i] == INST_SET[JMP].bytecode) {
             compiled_code[i++] = INST_SET[PUSH].bytecode;

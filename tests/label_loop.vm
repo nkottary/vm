@@ -10,10 +10,10 @@ WRTC
 PUSH 20h /* space character */
 WRTC
 EQU
-PUSH 16h
+PUSH 2Ch
 GOIF
 PUSH  1
 ADD
 jump start
-PUSH 0Ah
+PUSH 0Ah   /* this is pc = 2Ch */
 WRTC

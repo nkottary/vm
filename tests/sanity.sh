@@ -9,7 +9,7 @@ declare -a outputs=("123" $'\nHELLO WORLD!' $'1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ' $
 #compilation
 for fname in "${fnames[@]}"
 do
-    ./compiler $fname
+    ./compiler_dbg $fname
     if [ ! -f $fname"c" ]; then
         echo "$fname not compiled"
         exit 0
@@ -23,7 +23,7 @@ echo "--------------------------------------------------"
 #IO test
 for i in "${!fnames[@]}"
 do
-    output=`echo "${inputs[$i]}" | ./vm "${fnames[$i]}""c"`
+    output=`echo "${inputs[$i]}" | ./vm_dbg "${fnames[$i]}""c"`
     if [ "$output" != "${outputs[$i]}" ]; then
         echo "Test failed for ${fnames[$i]}"
         echo "Expected: ${outputs[$i]}"

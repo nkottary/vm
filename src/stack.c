@@ -59,7 +59,7 @@ void *top (Stack *s)
     return s->elems[s->top];
 }
 
-void freeStack(Stack *s)
+void freeStack (Stack *s)
 {
     assert(s != NULL);
     void *poped = pop(s);
