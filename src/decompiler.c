@@ -26,10 +26,12 @@ int main (int argc, char *argv[])
     }
 
     bytecode_t compiled_code[MAX_CODE_LEN],
-        n_insts;
+               code_len = 0,
+               code_start = 0;
 
-    fread(&n_insts, sizeof (bytecode_t), 1, fp);
-    fread(compiled_code, sizeof (bytecode_t), n_insts, fp);
+    fread(&code_start, sizeof (bytecode_t), 1, fp);
+    fread(&code_len, sizeof (bytecode_t), 1, fp);
+    fread(compiled_code, sizeof (bytecode_t), code_len, fp);
     fclose(fp);
 
     char src[1000];
@@ -37,7 +39,26 @@ int main (int argc, char *argv[])
 
     src[0] = '\0';
 
-    for (i = 0; i < n_insts; i ++) {
+    for (i = 0; i < code_start; i ++) {
+        symbol_t inst = get_inst(compiled_code[i]);
+        if (inst == NOP) {
+            strcat(src, INST_SET[inst].name);
+        } else {
+            char hex_num[20];
+            int push_arg = 0;
+            assert( (i + 4) < code_len);
+            vm_get_integer_from_bytecode(&compiled_code[i], &push_arg);
+            i += 3;
+            strcat(src, " ");
+            sprintf(hex_num, "%08xh # %d \n", push_arg, push_arg);
+            strcat(src, hex_num);
+        }
+        strcat(src, "\n");
+    }
+
+    strcat(src, "__CODE__\n");
+
+    for (i = code_start; i < code_len; i ++) {
         symbol_t inst = get_inst(compiled_code[i]);
         if (inst == ERR) {
             printf("\nERROR: unrecognizable byte code at"
@@ -48,11 +69,11 @@ int main (int argc, char *argv[])
         if (inst == PUSH) {
             char hex_num[20];
             int push_arg = 0;
-            assert( (i + 4) < n_insts);
+            assert( (i + 4) < code_len);
             vm_get_integer_from_bytecode(&compiled_code[i + 1], &push_arg);
-            i += 3;
+            i += 4;
             strcat(src, " ");
-            sprintf(hex_num, "%08xh /* %d */\n", push_arg, push_arg);
+            sprintf(hex_num, "%08xh # %d \n", push_arg, push_arg);
             strcat(src, hex_num);
         } else {
             strcat(src, "\n");

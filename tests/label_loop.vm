@@ -1,19 +1,20 @@
-/* Simple loop implementation using labels
- */
-PUSH 10
-PUSH  1
-:start
+__CODE__
+PUSH 0000000ah # 10 
+PUSH 00000001h # 1 
+NOP
 DUP
 WRTD
-PUSH 2Ch /* comma character */
+PUSH 0000002ch # 44 
 WRTC
-PUSH 20h /* space character */
+PUSH 00000020h # 32 
 WRTC
 EQU
-jumpif end
-PUSH  1
+PUSH 0000002dh # 45 
+GOIF
+PUSH 00000001h # 1 
 ADD
-jump start
-:end
-PUSH 0Ah   /* this is pc = 2Ch */
+PUSH 0000000bh # 11 
+GOTO
+NOP
+PUSH 0000000ah # 10 
 WRTC

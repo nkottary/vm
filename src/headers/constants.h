@@ -14,12 +14,6 @@
 
 typedef unsigned char bytecode_t;
 
-/*
- * Below #define defines the bytecodes, the following bytecodes are meant only
- * for compiler hints and will not be interpreted by the vm:
- * LAB, JMP
- */
-
 #define BYTECODE_DEF(list_macro) list_macro(REAH, 0x00),        \
         list_macro(READ, 0x01),                                 \
         list_macro(REAC, 0x02),                                 \
@@ -43,8 +37,15 @@ typedef unsigned char bytecode_t;
         list_macro(PUSH, 0x14),                                 \
         list_macro(ERR, 0x15),                                  \
         list_macro(NOP, 0x16),                                  \
+/* The following two byte codes are only used as compiler hints.\
+ * They are not interpreted by the vm.                          \
+ */                                                             \
         list_macro(LAB, 0x17),                                  \
         list_macro(JMP, 0x18),                                  \
+        list_macro(MEM, 0x19),                                  \
+/*************************************************************/ \
+        list_macro(GET, 0x1A),                                  \
+        list_macro(PUT, 0x1B),
 
 #define get_symbol_macro(symbol, hex) symbol
 #define get_ins_tuple_macro(symbol, hex) {#symbol, hex}

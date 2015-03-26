@@ -1,3 +1,4 @@
-/* Simply echo a read decimal byte */
+# Simply echo a read decimal byte 
+__CODE__
 READ
 WRTD

@@ -9,7 +9,6 @@ by the instructions.
 
 1. Stack of size 1000 elements each a byte.
 2. A boolean bit
-3. An error bit
 4. A program counter
 
 ## Instructions without args
@@ -50,6 +49,10 @@ DUP         - Duplicate the topmost element on
 	      the stack.
 FLIP        - Flip the top two elements on the 
 	      stack.
+GET         - Push the element at data segment 
+              address given by the top of stack.
+PUT         - Put the second in top of stack to 
+              the location given by top of stack.
 NOP         - No operation.
 ```
 ## Instructions with arguments
@@ -66,6 +69,7 @@ PUSH        - push a byte to top of stack. Byte may
 LAB         - Defines a label at this point.
 JMP         - Defines a jump to a label indexed by the
               next byte.
+MEM         - Used for indicating mem_get and mem_put.
 ```
 
 In a second pass of compilation LAB is replaced by NOP
@@ -83,18 +87,29 @@ jumped to with jump <label-name>, for example-
 
 ```
 ....code....
-:start  /* Definition of a label. */
+:start  \# Definition of a label.
 ....code....
-jump start /* Jump to label */
+jump start \# Jump to label 
+```
+Conditional jumps (jumpif and jumpun) are also available.
+
+### Data segment get and put
+
+To push a data segment value into stack use-
+```
+mem_get label_name
+```
+where label_name is the label in data segment where the 
+value is stored.
+
+To put top of stack value into data segment use-
+```
+mem_put label_name
 ```
 
-More High level instrcutions to be added.
+## comments
 
-## C-style comments
-
-Comments can be written between /* */, there should
-be a space after /* and before */. Comments can be 
-multi-line.
+Use the \# character for comments.
 
 ## How to run the example programs
 

@@ -1,4 +1,5 @@
-/* Checks if entered number is odd or even */
+# Checks if entered number is odd or even 
+__CODE__
 PUSH 02h
 READ
 DIV

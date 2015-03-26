@@ -1,8 +1,9 @@
 /* Print numbers from 1 to 10 */
+__CODE__
 PUSH  Ah
 PUSH  1h
 :start
-DUP           /* pc = Ah */
+DUP       
 WRTD
 PUSH 2Ch
 WRTC
@@ -14,5 +15,5 @@ PUSH  1h
 ADD
 jump start
 :end
-PUSH  Ah      /* pc = 2BH */
+PUSH  Ah  
 WRTC
