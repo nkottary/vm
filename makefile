@@ -11,9 +11,12 @@ $(BUILD_DIR)/stack.o: $(HEADER_DIR)/stack.h $(SRC_DIR)/stack.c
 $(BUILD_DIR)/constants.o: $(HEADER_DIR)/constants.h $(SRC_DIR)/constants.c
 	gcc -DNDEBUG -c $(SRC_DIR)/constants.c -o $(BUILD_DIR)/constants.o
 
-dependencies: $(BUILD_DIR)/constants.o $(BUILD_DIR)/stack.o
+$(BUILD_DIR)/lexer.o: $(HEADER_DIR)/lexer.h $(SRC_DIR)/lexer.c
+	gcc -DNDEBUG -c $(SRC_DIR)/lexer.c -o $(BUILD_DIR)/lexer.o
 
-$(BUILD_DIR)/compiler: $(SRC_DIR)/compiler.c $(BUILD_DIR)/constants.o
+dependencies: $(BUILD_DIR)/constants.o $(BUILD_DIR)/stack.o $(BUILD_DIR)/lexer.o
+
+$(BUILD_DIR)/compiler: $(SRC_DIR)/compiler.c $(BUILD_DIR)/constants.o $(BUILD_DIR)/lexer.o
 	gcc -DNDEBUG $(SRC_DIR)/compiler.c $(BUILD_DIR)/constants.o -o $(BUILD_DIR)/compiler
 
 $(BUILD_DIR)/decompiler: $(SRC_DIR)/decompiler.c $(BUILD_DIR)/constants.o
@@ -28,9 +31,12 @@ $(DEBUG_DIR)/stack.o: $(HEADER_DIR)/stack.h $(SRC_DIR)/stack.c
 $(DEBUG_DIR)/constants.o: $(HEADER_DIR)/constants.h $(SRC_DIR)/constants.c
 	gcc -c -g $(SRC_DIR)/constants.c -o $(DEBUG_DIR)/constants.o
 
-dependencies_dbg: $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o
+$(DEBUG_DIR)/lexer.o: $(HEADER_DIR)/lexer.h $(SRC_DIR)/lexer.c
+	gcc -c -g $(SRC_DIR)/lexer.c -o $(DEBUG_DIR)/lexer.o
 
-$(DEBUG_DIR)/compiler_dbg: $(SRC_DIR)/compiler.c $(DEBUG_DIR)/constants.o
+dependencies_dbg: $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/stack.o $(DEBUG_DIR)/lexer.o
+
+$(DEBUG_DIR)/compiler_dbg: $(SRC_DIR)/compiler.c $(DEBUG_DIR)/constants.o $(DEBUG_DIR)/lexer.o
 	gcc -g $(SRC_DIR)/compiler.c $(DEBUG_DIR)/constants.o -o $(DEBUG_DIR)/compiler_dbg
 
 $(DEBUG_DIR)/decompiler_dbg: $(SRC_DIR)/decompiler.c $(DEBUG_DIR)/constants.o

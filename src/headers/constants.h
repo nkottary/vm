@@ -11,6 +11,10 @@
 #include "enums.h"
 
 #define MAX_CODE_LEN 1000
+#define INST_LEN       5
+#define N_LABELS      10
+#define LABEL_LEN     10
+#define MAX_LINE_LEN  80
 
 typedef unsigned char bytecode_t;
 

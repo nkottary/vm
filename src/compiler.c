@@ -12,11 +12,7 @@
 
 #include "headers/constants.h"
 #include "headers/enums.h"
-
-#define INST_LEN       5
-#define N_LABELS      10
-#define LABEL_LEN     10
-#define MAX_LINE_LEN  80
+#include "headers/lexer.h"
 
 typedef enum JUMP_T {
     JUMP,
@@ -128,6 +124,59 @@ status_t vm_build_label_table (label_t *label_table, int *len, FILE *fp)
 }
 
 /**
+ * Validate a token.
+ *
+ * @param  token               The token to be validated.
+ *
+ * @return                     The error status.
+ */
+status_t vm_validate_non_null_token (char *token) {
+    if (token == NULL) {
+        return FAILURE;
+    }
+    if (strlen(token) == 0)  {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+status_t vm_get_next_token (char **token, FILE *fp, int *line_num, char *delim,
+                            char **checkpoint) {
+    return SUCCESS;
+}
+
+/**
+ * Get the argument given to push. Assumes token is valid.
+ *
+ * @param[out]  arg        The integer argument to push.
+ * @param[in]   token      The valid token from which to parse.
+ *
+ * @return                 The error status.
+ */
+status_t vm_handle_push_arg (int *arg, const char *token) {
+
+    assert(arg != NULL);
+    assert(token != NULL);
+
+    const int len = strlen(token);
+    if (token[0] == '\'') {
+        if (len != 3 || token[2] != '\'') {
+            return FAILURE;
+        } 
+        *arg = (int)token[1];
+    } else if (token[len - 1] == 'h') {
+        char scan_token[MAX_LINE_LEN];
+        strncpy(scan_token, token, len);
+        scan_token[len - 1] = '\0';
+        sscanf(scan_token, "%x", arg);
+    } else {
+        sscanf(token, "%d", arg);                    
+    }
+    return SUCCESS;
+}
+
+/**
  * Performs a one pass through the file and compiles to bytecode, but does not 
  * resolve labels and labelled jumps to GOTO's. Labels and jumps are only 
  * compiled to intermediate code. They will be replaced for proper bytecode
@@ -190,7 +239,6 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                 break;
             } else {
                 int arg = 0;
-                int len = 0;
                 while (token == NULL) {
                     if (fgets(line, MAX_LINE_LEN, fp) == NULL) {
                         fprintf(stderr, 
@@ -202,12 +250,11 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                     line_num++;
                     token = strtok_r(line, delim, &checkpoint);
                 }
-                len = strlen(token);
-                if (token[len - 1] == 'h') {
-                    token[len - 1] = '\0';
-                    sscanf(token, "%x", &arg);
-                } else {
-                    sscanf(token, "%d", &arg);                    
+                if (vm_handle_push_arg(&arg, token) == FAILURE) {
+                    fprintf(stderr, 
+                            "\nError: Syntax error in push argument in "
+                            "line number %d.", line_num);
+                    return FAILURE;
                 }
                 vm_put_integer_to_bytecode(&compiled_code[pc], arg);
                 pc += 4;
@@ -242,14 +289,9 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                 }
 
                 token = strtok_r(NULL, delim, &checkpoint);
-                if (token == NULL) {
-                    fprintf(stderr, "\nERROR: Jump not given a label in line "
+                if (vm_validate_non_null_token(token) == FAILURE) {
+                    fprintf(stderr, "\nERROR: Invalid label to jump in line "
                             "number %d", line_num);
-                    return FAILURE;
-                }
-                if (strlen(token) == 0)  {
-                    fprintf(stderr, "\nERROR: Argument to jump is not a label"
-                            " in line number %d", line_num);
                     return FAILURE;
                 }
                 const label_t *found_label = 
@@ -278,16 +320,12 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
             } else if (strcmp(token, "mem_get") == 0) {
                 compiled_code[pc++] = INST_SET[MEM].bytecode;
                 token = strtok_r(NULL, delim, &checkpoint);
-                if (token == NULL) {
-                    fprintf(stderr, "\nERROR: Memget not given a label in line "
+                if (vm_validate_non_null_token(token) == FAILURE) {
+                    fprintf(stderr, "\nERROR: Invalid label to mem_get in line "
                             "number %d", line_num);
                     return FAILURE;
                 }
-                if (strlen(token) == 0)  {
-                    fprintf(stderr, "\nERROR: Argument to memget is not a label"
-                            " in line number %d", line_num);
-                    return FAILURE;
-                }
+
                 const label_t *found_label = 
                     vm_search_label_table(token, label_table, lt_len);
 
@@ -302,14 +340,9 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
             } else if (strcmp(token, "mem_put") == 0) {
                 compiled_code[pc++] = INST_SET[MEM].bytecode;
                 token = strtok_r(NULL, delim, &checkpoint);
-                if (token == NULL) {
-                    fprintf(stderr, "\nERROR: Memput not given a label in line "
+                if (vm_validate_non_null_token(token) == FAILURE) {
+                    fprintf(stderr, "\nERROR: Invalid label to mem_put in line "
                             "number %d", line_num);
-                    return FAILURE;
-                }
-                if (strlen(token) == 0)  {
-                    fprintf(stderr, "\nERROR: Argument to memput is not a label"
-                            " in line number %d", line_num);
                     return FAILURE;
                 }
                 const label_t *found_label = 
@@ -340,12 +373,11 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                         line_num++;
                         token = strtok_r(line, delim, &checkpoint);
                     }
-                    len = strlen(token);
-                    if (token[len - 1] == 'h') {
-                        token[len - 1] = '\0';
-                        sscanf(token, "%x", &arg);
-                    } else {
-                        sscanf(token, "%d", &arg);                    
+                    if (vm_handle_push_arg(&arg, token) == FAILURE) {
+                        fprintf(stderr, 
+                                "\nError: Syntax error in push argument in "
+                                "line number %d.", line_num);
+                        return FAILURE;
                     }
                     vm_put_integer_to_bytecode(&compiled_code[pc], arg);
                     pc += 4;

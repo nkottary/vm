@@ -39,24 +39,24 @@ jumpun start
 
 :prime
 PUSH 0
-PUSH 101
-PUSH 109
-PUSH 105
-PUSH 114
-PUSH 112
+PUSH 'e'
+PUSH 'm'
+PUSH 'i'
+PUSH 'r'
+PUSH 'p'
 jump print
 
 :not_prime
 PUSH 0
-PUSH 101
-PUSH 109
-PUSH 105
-PUSH 114
-PUSH 112
+PUSH 'e'
+PUSH 'm'
+PUSH 'i'
+PUSH 'r'
+PUSH 'p'
 PUSH 32
-PUSH 116
-PUSH 111
-PUSH 110
+PUSH 't'
+PUSH 'o'
+PUSH 'n'
 jump print
 
 :print                   # WRTC till TOS is not zero
