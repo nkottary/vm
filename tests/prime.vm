@@ -1,0 +1,71 @@
+# Test if an input number if prime 
+
+# global variables 
+:input 0
+:divisor 2
+
+__CODE__
+
+READ                       # read a decimal number.
+mem_put input              # store it in input label.
+
+mem_get input              # Special cases.
+PUSH 2                     # if 2 then prime.
+EQU
+jumpif prime
+GRT                        # If less than 2 then not prime.
+jumpif not_prime
+
+:start
+mem_get divisor
+mem_get input
+DIV
+POP                        # Discard the quotient.
+PUSH 0                     # Check if remainder is 0.
+EQU                         
+POP POP                    # clear the stack
+jumpif not_prime            
+
+mem_get divisor            # Add 1 to the divisor
+PUSH 1
+ADD
+mem_put divisor
+
+mem_get divisor
+mem_get input              # If divisor is not equal to input,
+EQU                        # continue loop.
+POP POP                    # clear the stack.
+jumpun start
+
+:prime
+PUSH 0
+PUSH 101
+PUSH 109
+PUSH 105
+PUSH 114
+PUSH 112
+jump print
+
+:not_prime
+PUSH 0
+PUSH 101
+PUSH 109
+PUSH 105
+PUSH 114
+PUSH 112
+PUSH 32
+PUSH 116
+PUSH 111
+PUSH 110
+jump print
+
+:print                   # WRTC till TOS is not zero
+PUSH 0
+EQU
+jumpif end
+POP
+WRTC
+jump print
+
+:end
+END

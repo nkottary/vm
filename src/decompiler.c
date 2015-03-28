@@ -35,20 +35,20 @@ int main (int argc, char *argv[])
     fclose(fp);
 
     char src[1000];
-    int i = 0;
+    int pc = 0;
 
     src[0] = '\0';
 
-    for (i = 0; i < code_start; i ++) {
-        symbol_t inst = get_inst(compiled_code[i]);
+    for (pc = 0; pc < code_start; pc ++) {
+        symbol_t inst = get_inst(compiled_code[pc]);
         if (inst == NOP) {
             strcat(src, INST_SET[inst].name);
         } else {
             char hex_num[20];
             int push_arg = 0;
-            assert( (i + 4) < code_len);
-            vm_get_integer_from_bytecode(&compiled_code[i], &push_arg);
-            i += 3;
+            assert( (pc + 4) < code_len);
+            vm_get_integer_from_bytecode(&compiled_code[pc], &push_arg);
+            pc += 3;
             strcat(src, " ");
             sprintf(hex_num, "%08xh # %d \n", push_arg, push_arg);
             strcat(src, hex_num);
@@ -58,20 +58,20 @@ int main (int argc, char *argv[])
 
     strcat(src, "__CODE__\n");
 
-    for (i = code_start; i < code_len; i ++) {
-        symbol_t inst = get_inst(compiled_code[i]);
+    for (pc = code_start; pc < code_len; pc ++) {
+        symbol_t inst = get_inst(compiled_code[pc]);
         if (inst == ERR) {
             printf("\nERROR: unrecognizable byte code at"
-                   "byte number %d", i);
+                   "byte number %d", pc);
             return 0;
         }
         strcat(src, INST_SET[inst].name);
         if (inst == PUSH) {
             char hex_num[20];
             int push_arg = 0;
-            assert( (i + 4) < code_len);
-            vm_get_integer_from_bytecode(&compiled_code[i + 1], &push_arg);
-            i += 4;
+            assert( (pc + 4) < code_len);
+            vm_get_integer_from_bytecode(&compiled_code[pc + 1], &push_arg);
+            pc += 4;
             strcat(src, " ");
             sprintf(hex_num, "%08xh # %d \n", push_arg, push_arg);
             strcat(src, hex_num);

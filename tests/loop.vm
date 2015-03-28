@@ -1,4 +1,4 @@
-/* Print numbers from 1 to 10 */
+# Print numbers from 1 to 10 
 __CODE__
 PUSH  Ah
 PUSH  1h

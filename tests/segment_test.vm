@@ -1,6 +1,6 @@
-/* A test to check if data segment works */
+# A test to check if data segment works 
 :int_val 55
-__CODE__             /* code segment starts here */
+__CODE__             # code segment starts here
 mem_get int_val
 WRTD
 END

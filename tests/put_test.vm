@@ -1,14 +1,10 @@
-NOP
- 0000007bh # 123 
-
+# A test for mem_put 
+:test_mem 123
 __CODE__
-PUSH 00000001h # 1 
-GET
-WRTD
-PUSH 00000141h # 321 
-PUSH 00000001h # 1 
-PUT
-PUSH 00000001h # 1 
-GET
+mem_get test_mem
+WRTD  
+PUSH 321
+mem_put test_mem
+mem_get test_mem
 WRTD
 END

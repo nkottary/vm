@@ -1,20 +1,19 @@
+# Simple loop implementation using labels
 __CODE__
-PUSH 0000000ah # 10 
-PUSH 00000001h # 1 
-NOP
+PUSH 10
+PUSH  1
+:start
 DUP
 WRTD
-PUSH 0000002ch # 44 
+PUSH 2Ch # comma character 
 WRTC
-PUSH 00000020h # 32 
+PUSH 20h # space character 
 WRTC
 EQU
-PUSH 0000002dh # 45 
-GOIF
-PUSH 00000001h # 1 
+jumpif end
+PUSH  1
 ADD
-PUSH 0000000bh # 11 
-GOTO
-NOP
-PUSH 0000000ah # 10 
+jump start
+:end
+PUSH 0Ah # newline
 WRTC

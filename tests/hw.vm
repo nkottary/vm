@@ -1,4 +1,4 @@
-/* Hello world program */
+# Hello world program 
 __CODE__
 PUSH  Ah
 PUSH 21h

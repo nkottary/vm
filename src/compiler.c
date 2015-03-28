@@ -262,13 +262,8 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                 }
 
                 compiled_code[pc++] = INST_SET[JMP].bytecode;
-                compiled_code[pc++] = found_label->id;
-                /*
-                 * Making room for 32-bit integer argument to push
-                 */
-                compiled_code[pc++] = 0;
-                compiled_code[pc++] = 0;
-                compiled_code[pc++] = 0;
+                vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
+                pc += 4;
                 if (flag == JUMPIF) {
                     compiled_code[pc] = INST_SET[GOIF].bytecode;
                 } else if (flag == JUMPUN) {
@@ -301,13 +296,8 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                             " in line number %d", line_num);
                     return FAILURE;
                 }
-                compiled_code[pc++] = found_label->id;
-                /*
-                 * Making room for 32-bit integer argument to push
-                 */
-                compiled_code[pc++] = 0;
-                compiled_code[pc++] = 0;
-                compiled_code[pc++] = 0;
+                vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
+                pc += 4;
                 compiled_code[pc++] = INST_SET[GET].bytecode;
             } else if (strcmp(token, "mem_put") == 0) {
                 compiled_code[pc++] = INST_SET[MEM].bytecode;
@@ -330,13 +320,8 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                             " in line number %d", line_num);
                     return FAILURE;
                 }
-                compiled_code[pc++] = found_label->id;
-                /*
-                 * Making room for 32-bit integer argument to push
-                 */
-                compiled_code[pc++] = 0;
-                compiled_code[pc++] = 0;
-                compiled_code[pc++] = 0;
+                vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
+                pc += 4;
                 compiled_code[pc++] = INST_SET[PUT].bytecode;
             } else if (strcmp(token, "PUSH") == 0) {
                 compiled_code[pc++] = INST_SET[PUSH].bytecode;
