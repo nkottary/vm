@@ -55,94 +55,62 @@ const label_t* vm_search_label_table (const char *key,
 }
 
 /**
- * Perform a one pass through the file and build label table.
+ * Perform a one pass through the token list and build label table.
  *
  * @param[out] label_table  The table to be populated from file.
  * @param[out] len          The length of the table after being populated.
- * @param[in]  fp           The source file.
+ * @param[in]  tok_list        
  *
  * @return                  Returns a status_t.
  */
-status_t vm_build_label_table (label_t *label_table, int *len, FILE *fp)
+status_t vm_build_label_table (label_t *label_table, int *len, 
+                               const token_t *tok_list)
 {
     assert(label_table != NULL);
     assert(len != NULL);
-    assert(fp != NULL);
+    assert(tok_list != NULL);
 
-    char line[MAX_LINE_LEN],
-        *line_ptr = NULL,
-        *checkpoint = NULL,
-        *token = NULL;
-    const char delim[] = " \n";
+    const char *token = NULL;
+    int line_num = 0;
 
-    bytecode_t line_num = 0,
-               label_count = 0;
+    bytecode_t label_count = 0;
 
-    if (fgets(line, MAX_LINE_LEN, fp) == NULL) { /* Nothing to do. */
-        return SUCCESS;
-    }
+    *len = 0;
 
-    do {
-        line_num++;
-        line_ptr = line;
-        while ( (token = strtok_r(line_ptr, delim, &checkpoint)) != NULL) {
-            line_ptr = NULL;
-            if (token[0] == ':') {
-                token++; /* forget the ':' */
-                if (strlen(token) == 0) {
-                    fprintf(stderr, 
-                            "\nERROR: unnamed label in line number %d\n", 
-                            line_num);
-                    return FAILURE;
-                }
+    while (tok_list != NULL) {
 
-                label_t *this_lbl = &label_table[label_count];
-                const label_t *found_label = vm_search_label_table(token, 
-                                                                   label_table, 
-                                                                   label_count);
-                if (found_label != NULL) {
-                    fprintf(stderr, 
-                            "\nERROR: Label redefined in line number %d, "
-                            "earlier definition was here %d\n", 
-                            line_num, found_label->line_num);
-                    return FAILURE;
-                }
-                memset(this_lbl->label, 0, LABEL_LEN);
-                strncpy(this_lbl->label, token, LABEL_LEN);
-                this_lbl->line_num = line_num;
-                this_lbl->id = label_count;
+        token = tok_list->token;
+        line_num = tok_list->line_num;
 
-                label_count++;
-            } else if (token[0] == '#') {
-                break;
+        if (token[0] == ':') {
+            token++; /* forget the ':' */
+            if (strlen(token) == 0) {
+                fprintf(stderr, 
+                        "\nERROR: unnamed label in line number %d\n", 
+                        line_num);
+                return FAILURE;
             }
+
+            label_t *this_lbl = &label_table[label_count];
+            const label_t *found_label = vm_search_label_table(token, 
+                                                               label_table, 
+                                                               label_count);
+            if (found_label != NULL) {
+                fprintf(stderr, 
+                        "\nERROR: Label redefined in line number %d, "
+                        "earlier definition was here %d\n", 
+                        line_num, found_label->line_num);
+                return FAILURE;
+            }
+            memset(this_lbl->label, 0, LABEL_LEN);
+            strncpy(this_lbl->label, token, LABEL_LEN);
+            this_lbl->line_num = line_num;
+            this_lbl->id = label_count;
+            label_count++;
         }
-    } while (fgets(line, MAX_LINE_LEN, fp) != NULL);
-
+        tok_list = tok_list->next_tk;
+    } 
     *len = label_count;
-    return SUCCESS;
-}
-
-/**
- * Validate a token.
- *
- * @param  token               The token to be validated.
- *
- * @return                     The error status.
- */
-status_t vm_validate_non_null_token (char *token) {
-    if (token == NULL) {
-        return FAILURE;
-    }
-    if (strlen(token) == 0)  {
-        return FAILURE;
-    }
-
-    return SUCCESS;
-}
-
-status_t vm_get_next_token (char **token, FILE *fp, int *line_num, char *delim,
-                            char **checkpoint) {
     return SUCCESS;
 }
 
@@ -154,7 +122,7 @@ status_t vm_get_next_token (char **token, FILE *fp, int *line_num, char *delim,
  *
  * @return                 The error status.
  */
-status_t vm_handle_push_arg (int *arg, const char *token) {
+status_t vm_get_coded_arg (int *arg, const char *token) {
 
     assert(arg != NULL);
     assert(token != NULL);
@@ -193,74 +161,46 @@ status_t vm_handle_push_arg (int *arg, const char *token) {
  * @return                     Returns a status_t.
  */
 status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len, 
-                                int *code_start, FILE *fp, 
+                                int *code_start, token_t *tok_list, 
                                 const label_t *label_table, const int lt_len)
 {
     assert(compiled_code != NULL);
     assert(len           != NULL);
-    assert(fp            != NULL);
+    assert(tok_list      != NULL);
     assert(code_start    != NULL);
 
-    char line[MAX_LINE_LEN],
-        *line_ptr =   NULL,
-        *checkpoint = NULL,
-        *token =      NULL;
+    const char *token = NULL;
     const char delim[] = " \n";
 
-    bytecode_t line_num =    0,
-               pc =          0;
+    bytecode_t pc = 0;
+    unsigned int line_num = 0;
 
-    bool_flag_t  code_flag = FALSE;
+    bool_flag_t  code_flag    = FALSE;
 
-    if (fgets(line, MAX_LINE_LEN, fp) == NULL) { /* Nothing to do. */
-        return SUCCESS;
+    while (tok_list && !code_flag) {
+        line_num = tok_list->line_num;
+        token = tok_list->token;
+        if (token[0] == ':') {
+            /* 
+             * The following will be replaced by NOP once the labels are 
+             * resolved.
+             */
+            compiled_code[pc++] = INST_SET[LAB].bytecode;
+        } else if (strcmp(token, "__CODE__") == 0) {
+            code_flag = TRUE;
+        } else {
+            int arg = 0;
+            if (vm_get_coded_arg(&arg, token) == FAILURE) {
+                fprintf(stderr, 
+                        "\nError: Syntax error in push argument in "
+                        "line number %d.", line_num);
+                return FAILURE;
+            }
+            vm_put_integer_to_bytecode(&compiled_code[pc], arg);
+            pc += 4;
+        }
+        tok_list = tok_list->next_tk;
     }
-
-    do {
-        if (code_flag) {
-            break;
-        }
-
-        line_num++;
-        line_ptr = line;
-        while ( (token = strtok_r(line_ptr, delim, &checkpoint)) != NULL) {
-            line_ptr = NULL;
-            if (token[0] == ':') {
-                /* 
-                 * The following will be replaced by NOP once the labels are 
-                 * resolved.
-                 */
-                compiled_code[pc++] = INST_SET[LAB].bytecode;
-            }
-            else if (token[0] == '#') {
-                break;
-            } else if (strcmp(token, "__CODE__") == 0) {
-                code_flag = TRUE;
-                break;
-            } else {
-                int arg = 0;
-                while (token == NULL) {
-                    if (fgets(line, MAX_LINE_LEN, fp) == NULL) {
-                        fprintf(stderr, 
-                                "\nError: Unexpected end of file- PUSH not"
-                                " given an argument in line number %d", 
-                                line_num);
-                        return FAILURE;
-                    }
-                    line_num++;
-                    token = strtok_r(line, delim, &checkpoint);
-                }
-                if (vm_handle_push_arg(&arg, token) == FAILURE) {
-                    fprintf(stderr, 
-                            "\nError: Syntax error in push argument in "
-                            "line number %d.", line_num);
-                    return FAILURE;
-                }
-                vm_put_integer_to_bytecode(&compiled_code[pc], arg);
-                pc += 4;
-            }
-        }
-    } while (fgets(line, MAX_LINE_LEN, fp) != NULL);
 
     if (!code_flag) {
         fprintf(stderr, "\nError: Code segment not declared!");
@@ -268,135 +208,110 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
     }
     *code_start = pc;
 
-    do {
-        line_num++;
-        line_ptr = line;
-        while ( (token = strtok_r(line_ptr, delim, &checkpoint)) != NULL) {
-            line_ptr = NULL;
-            if (token[0] == ':') {
-                /* 
-                 * The following will be replaced by NOP once the labels are 
-                 * resolved.
-                 */
-                compiled_code[pc++] = INST_SET[LAB].bytecode;
-            }
-            else if (strncmp(token, "jump", 4) == 0) {
-                jump_t flag = JUMP;
-                if (strcmp(token, "jumpif") == 0) {
-                    flag = JUMPIF;
-                } else if (strcmp(token, "jumpun") == 0) {
-                    flag = JUMPUN;
-                }
-
-                token = strtok_r(NULL, delim, &checkpoint);
-                if (vm_validate_non_null_token(token) == FAILURE) {
-                    fprintf(stderr, "\nERROR: Invalid label to jump in line "
-                            "number %d", line_num);
-                    return FAILURE;
-                }
-                const label_t *found_label = 
-                    vm_search_label_table(token, label_table, lt_len);
-
-                if (found_label == NULL) {
-                    fprintf(stderr, "\nERROR: Jump label not found"
-                            " in line number %d", line_num);
-                    return FAILURE;
-                }
-
-                compiled_code[pc++] = INST_SET[JMP].bytecode;
-                vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
-                pc += 4;
-                if (flag == JUMPIF) {
-                    compiled_code[pc] = INST_SET[GOIF].bytecode;
-                } else if (flag == JUMPUN) {
-                    compiled_code[pc] = INST_SET[GOUN].bytecode;
-                } else {
-                    compiled_code[pc] = INST_SET[GOTO].bytecode;
-                }
-                pc++;
-            }
-            else if (token[0] == '#') {
-                break;
-            } else if (strcmp(token, "mem_get") == 0) {
-                compiled_code[pc++] = INST_SET[MEM].bytecode;
-                token = strtok_r(NULL, delim, &checkpoint);
-                if (vm_validate_non_null_token(token) == FAILURE) {
-                    fprintf(stderr, "\nERROR: Invalid label to mem_get in line "
-                            "number %d", line_num);
-                    return FAILURE;
-                }
-
-                const label_t *found_label = 
-                    vm_search_label_table(token, label_table, lt_len);
-
-                if (found_label == NULL) {
-                    fprintf(stderr, "\nERROR: memget label not found"
-                            " in line number %d", line_num);
-                    return FAILURE;
-                }
-                vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
-                pc += 4;
-                compiled_code[pc++] = INST_SET[GET].bytecode;
-            } else if (strcmp(token, "mem_put") == 0) {
-                compiled_code[pc++] = INST_SET[MEM].bytecode;
-                token = strtok_r(NULL, delim, &checkpoint);
-                if (vm_validate_non_null_token(token) == FAILURE) {
-                    fprintf(stderr, "\nERROR: Invalid label to mem_put in line "
-                            "number %d", line_num);
-                    return FAILURE;
-                }
-                const label_t *found_label = 
-                    vm_search_label_table(token, label_table, lt_len);
-
-                if (found_label == NULL) {
-                    fprintf(stderr, "\nERROR: Memput label not found"
-                            " in line number %d", line_num);
-                    return FAILURE;
-                }
-                vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
-                pc += 4;
-                compiled_code[pc++] = INST_SET[PUT].bytecode;
-            } else if (strcmp(token, "PUSH") == 0) {
-                compiled_code[pc++] = INST_SET[PUSH].bytecode;
-                if (!feof(fp)) {
-                    int arg = 0;
-                    int len = 0;
-                    token = strtok_r(NULL, delim, &checkpoint);
-                    while (token == NULL) {
-                        if (fgets(line, MAX_LINE_LEN, fp) == NULL) {
-                            fprintf(stderr, 
-                                    "\nError: Unexpected end of file- PUSH not"
-                                    " given an argument in line number %d", 
-                                    line_num);
-                            return FAILURE;
-                        }
-                        line_num++;
-                        token = strtok_r(line, delim, &checkpoint);
-                    }
-                    if (vm_handle_push_arg(&arg, token) == FAILURE) {
-                        fprintf(stderr, 
-                                "\nError: Syntax error in push argument in "
-                                "line number %d.", line_num);
-                        return FAILURE;
-                    }
-                    vm_put_integer_to_bytecode(&compiled_code[pc], arg);
-                    pc += 4;
-                } else {
-                    fprintf(stderr, "\nERROR: PUSH not given an argument in"
-                            " line number %d\n", line_num);
-                    return FAILURE;
-                }
-            } else {
-                bytecode_t bc = get_bytecode(token);
-                if (bc == INST_SET[ERR].bytecode) {
-                    fprintf(stderr, "\nERROR: unrecognized instruction %s in"
-                            " line number %d\n", token, line_num);
-                    return FAILURE;
-                }
-                compiled_code[pc++] = bc;
-            }
+    while (tok_list) {
+        line_num = tok_list->line_num;
+        token = tok_list->token;
+        if (token[0] == ':') {
+            /* 
+             * The following will be replaced by NOP once the labels are 
+             * resolved.
+             */
+            compiled_code[pc++] = INST_SET[LAB].bytecode;
         }
-    } while (fgets(line, MAX_LINE_LEN, fp) != NULL);
+        else if (strncmp(token, "jump", 4) == 0) {
+            jump_t flag = JUMP;
+            if (strcmp(token, "jumpif") == 0) {
+                flag = JUMPIF;
+            } else if (strcmp(token, "jumpun") == 0) {
+                flag = JUMPUN;
+            }
+
+            tok_list = tok_list->next_tk;
+            line_num = tok_list->line_num;
+            token = tok_list->token;
+
+            const label_t *found_label = 
+                vm_search_label_table(token, label_table, lt_len);
+
+            if (found_label == NULL) {
+                fprintf(stderr, "\nERROR: Jump label not found"
+                        " in line number %d", line_num);
+                return FAILURE;
+            }
+
+            compiled_code[pc++] = INST_SET[JMP].bytecode;
+            vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
+            pc += 4;
+
+            if (flag == JUMPIF) {
+                compiled_code[pc] = INST_SET[GOIF].bytecode;
+            } else if (flag == JUMPUN) {
+                compiled_code[pc] = INST_SET[GOUN].bytecode;
+            } else {
+                compiled_code[pc] = INST_SET[GOTO].bytecode;
+            }
+            pc++;
+        } else if (strcmp(token, "mem_get") == 0) {
+            compiled_code[pc++] = INST_SET[MEM].bytecode;
+            tok_list = tok_list->next_tk;
+            line_num = tok_list->line_num;
+            token = tok_list->token;
+
+            const label_t *found_label = 
+                vm_search_label_table(token, label_table, lt_len);
+
+            if (found_label == NULL) {
+                fprintf(stderr, "\nERROR: memget label not found"
+                        " in line number %d", line_num);
+                return FAILURE;
+            }
+            vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
+            pc += 4;
+            compiled_code[pc++] = INST_SET[GET].bytecode;
+        } else if (strcmp(token, "mem_put") == 0) {
+            compiled_code[pc++] = INST_SET[MEM].bytecode;
+            tok_list = tok_list->next_tk;
+            line_num = tok_list->line_num;
+            token = tok_list->token;
+
+            const label_t *found_label = 
+                vm_search_label_table(token, label_table, lt_len);
+
+            if (found_label == NULL) {
+                fprintf(stderr, "\nERROR: Memput label not found"
+                        " in line number %d", line_num);
+                return FAILURE;
+            }
+            vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
+            pc += 4;
+            compiled_code[pc++] = INST_SET[PUT].bytecode;
+        } else if (strcmp(token, "PUSH") == 0) {
+            compiled_code[pc++] = INST_SET[PUSH].bytecode;
+
+            int arg = 0;
+            tok_list = tok_list->next_tk;
+            line_num = tok_list->line_num;
+            token = tok_list->token;
+
+            if (vm_get_coded_arg(&arg, token) == FAILURE) {
+                fprintf(stderr, 
+                        "\nError: Syntax error in push argument in "
+                        "line number %d.", line_num);
+                return FAILURE;
+            }
+            vm_put_integer_to_bytecode(&compiled_code[pc], arg);
+            pc += 4;
+        } else {
+            bytecode_t bc = get_bytecode(token);
+            if (bc == INST_SET[ERR].bytecode) {
+                fprintf(stderr, "\nERROR: unrecognized instruction %s in"
+                        " line number %d\n", token, line_num);
+                return FAILURE;
+            }
+            compiled_code[pc++] = bc;
+        }
+        tok_list = tok_list->next_tk;
+    }
 
     *len = pc;
     return SUCCESS;
@@ -473,6 +388,7 @@ int main (int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    token_t *tok_list = NULL;
     bytecode_t compiled_code[MAX_CODE_LEN];
     label_t label_table[N_LABELS];    
     int code_len = 0, 
@@ -482,18 +398,24 @@ int main (int argc, char *argv[])
     memset(compiled_code, MAX_CODE_LEN, sizeof(bytecode_t));
     memset(label_table, N_LABELS, sizeof(label_t));
 
-    if (vm_build_label_table(label_table, &label_count, fp) == FAILURE) {
+    if (vm_get_token_list(fp, &tok_list) == FAILURE) {
+        fprintf(stderr, "\nERROR: Failed to tokenize.");
+        exit(EXIT_FAILURE);
+    }
+
+    if (vm_build_label_table(label_table, &label_count, tok_list) == FAILURE) {
         fprintf(stderr, "\nERROR: Failed to build label table.");
         exit(EXIT_FAILURE);
     }
 
     rewind(fp);
     if (vm_compile_first_pass(compiled_code, &code_len, &code_start,
-                              fp, label_table, label_count) == FAILURE) {
+                              tok_list, label_table, label_count) == FAILURE) {
         fprintf(stderr, "\nERROR: Compilation failed in first pass.");
         exit(EXIT_FAILURE);
     }
     fclose(fp);
+    vm_free_token_list(tok_list);
 
     if (vm_compile_second_pass(compiled_code, code_len, code_start, label_table,
                                label_count) == FAILURE) {

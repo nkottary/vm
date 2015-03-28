@@ -22,7 +22,7 @@ const INS INST_SET[] = {
  *
  * @return               The instruction enum.
  */
-symbol_t get_inst (bytecode_t bytecode) {
+symbol_t get_inst (const bytecode_t bytecode) {
     int i;
     for (i = 0; i < N_INST; i ++) {
         if (INST_SET[i].bytecode == bytecode) {
@@ -39,7 +39,7 @@ symbol_t get_inst (bytecode_t bytecode) {
  *
  * @return               The instruction bytecode.
  */
-bytecode_t get_bytecode (char *inst) {
+bytecode_t get_bytecode (const char *inst) {
     int i;
 
     assert(inst != NULL);
