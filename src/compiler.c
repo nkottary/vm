@@ -177,6 +177,8 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
 
     bool_flag_t  code_flag    = FALSE;
 
+    tok_list = tok_list->next_tk; /* Ignore the dummy token */
+
     while (tok_list && !code_flag) {
         line_num = tok_list->line_num;
         token = tok_list->token;
@@ -313,6 +315,12 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
         tok_list = tok_list->next_tk;
     }
 
+    compiled_code[pc++] = INST_SET[END].bytecode; /* This is required when there
+                                                   * is label at the very end
+                                                   * because the pc will go to
+                                                   * the instruction after that
+                                                   * label.
+                                                   */
     *len = pc;
     return SUCCESS;
 }

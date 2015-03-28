@@ -1,30 +1,29 @@
 # Hello world program 
-__CODE__
-PUSH  Ah
-PUSH 21h
-PUSH 44h
-PUSH 4Ch
-PUSH 52h
-PUSH 4Fh
-PUSH 57h
-PUSH 20h
-PUSH 4Fh
-PUSH 4Ch
-PUSH 4Ch
-PUSH 45h
-PUSH 48h
-PUSH  Ah
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
+__CODE__                # start code segment
+# PUSH the string Hello World! in reverse order.
+# 0 indicates end of string.
+PUSH   0                
+PUSH  10                # new line.
+PUSH '!'
+PUSH 'D'
+PUSH 'L'
+PUSH 'R'
+PUSH 'O'
+PUSH 'W'
+PUSH 32                 # space
+PUSH 'O'
+PUSH 'L'
+PUSH 'L'
+PUSH 'E'
+PUSH 'H'
+PUSH  Ah                # new line. (in hexadecimal).
+
+:print                  # A label for decision making/looping.
+PUSH 0
+EQU
+jumpif end              # If top of stack is zero stop printing.
+POP                     # pop the 0.
+WRTC                    # print the character.
+jump print              # loop.
+
+:end

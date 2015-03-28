@@ -1,15 +1,10 @@
-# Bytecode Interpreter for a Stack Machine
-
-I am going to build a high level language that 
-compiles to this bytecode. This is a stack machine
- so arguments are pushed to a stack and consumed 
-by the instructions.
+# Assembly Language for a stack machine
 
 ## Resources
 
-1. Stack of size 1000 elements each a byte.
-2. A boolean bit
-4. A program counter
+1. Stack of size 1000 elements each 4 bytes.
+2. A boolean bit.
+3. A program counter.
 
 ## Instructions without args
 

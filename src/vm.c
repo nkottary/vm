@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
             *stack_val = input;
             if (push(stk, (void *)stack_val) == FAILURE) {
                 fprintf(stderr, "\nError: Stack overflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction REAH", pc);
                 error_flag = ERROR;
             }
             break;
@@ -72,7 +72,7 @@ int main (int argc, char *argv[])
             *stack_val = input;
             if (push(stk, (void *)stack_val) == FAILURE) {
                 fprintf(stderr, "\nError: Stack overflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction READ", pc);
                 error_flag = ERROR;
             }
             break;
@@ -84,7 +84,7 @@ int main (int argc, char *argv[])
             *stack_val = input;
             if (push(stk, (void *)stack_val) == FAILURE) {
                 fprintf(stderr, "\nError: Stack overflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction REAC", pc);
                 error_flag = ERROR;
             }
             break;
@@ -96,7 +96,7 @@ int main (int argc, char *argv[])
                 free(stack_val);
             } else {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction WRTH", pc);
                 error_flag = ERROR;
             }
             break;
@@ -108,7 +108,7 @@ int main (int argc, char *argv[])
                 free(stack_val);
             } else {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction WRTD", pc);
                 error_flag = ERROR;
             }
             break;
@@ -120,7 +120,7 @@ int main (int argc, char *argv[])
                 free(stack_val);
             } else {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction WRTC", pc);
                 error_flag = ERROR;
             }
             break;
@@ -130,7 +130,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction ADD", pc);
                 error_flag = ERROR;
             } else {
                 *num2 = (*num1) + (*num2);
@@ -143,7 +143,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction SUB", pc);
                 error_flag = ERROR;
             } else {
                 *num2 = (*num1) - (*num2);
@@ -157,7 +157,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction MUL", pc);
                 error_flag = ERROR;
             } else {
                 *num2 = (*num1) * (*num2);
@@ -171,7 +171,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction DIV", pc);
                 error_flag = ERROR;
             } else {
                 int _num1, _num2;
@@ -188,7 +188,7 @@ int main (int argc, char *argv[])
             stack_val = pop(stk);
             if (stack_val == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction POP", pc);
                 error_flag = ERROR;
             } else {
                 free(stack_val);
@@ -200,7 +200,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction EQU", pc);
                 error_flag = ERROR;
             } else {
                 if (*num1 == *num2) {
@@ -217,7 +217,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction GRT", pc);
                 error_flag = ERROR;
             } else {
                 if (*num1 > *num2) {
@@ -234,7 +234,7 @@ int main (int argc, char *argv[])
             num2 = (int *)top(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction LST", pc);
                 error_flag = ERROR;
             } else {
                 if (*num1 < *num2) {
@@ -250,7 +250,7 @@ int main (int argc, char *argv[])
             stack_val = (int *)pop(stk);
             if (stack_val == 0 || *stack_val > code_len - 1) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction GOTO", pc);
                 error_flag = ERROR;
             } else {
                 pc = *stack_val - 1;
@@ -262,7 +262,7 @@ int main (int argc, char *argv[])
             stack_val = (int *)pop(stk);
             if (stack_val == 0 || *stack_val > code_len - 1) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction GOIF", pc);
                 error_flag = ERROR;
             } else {
                 if (bool_flag == TRUE) {
@@ -276,7 +276,7 @@ int main (int argc, char *argv[])
             stack_val = (int *)pop(stk);
             if (stack_val == 0 || *stack_val > code_len - 1) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction GOUN", pc);
                 error_flag = ERROR;
             } else {
                 if (bool_flag == FALSE) {
@@ -295,14 +295,14 @@ int main (int argc, char *argv[])
             num2 = (int *)malloc(sizeof(int *));
             if (num1 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction DUP", pc);
                 error_flag = ERROR;
             } else {
                 *num2 = *num1;
 
                 if (push(stk, num2) == FAILURE) {
                     fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction DUP", pc);
                     error_flag = ERROR;
                 }
             }
@@ -313,7 +313,7 @@ int main (int argc, char *argv[])
             num2 = (int *)pop(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction FLIP", pc);
                 error_flag = ERROR;
             } else {
                 push(stk, num1);
@@ -328,7 +328,7 @@ int main (int argc, char *argv[])
             assert(pc < code_len);
             if (push(stk, (void *)stack_val) == FAILURE) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction PUSH", pc);
                 error_flag = ERROR;
             }
             break;
@@ -337,7 +337,7 @@ int main (int argc, char *argv[])
             num1 = (int *)top(stk);
             if (num1 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction GET", pc);
                 error_flag = ERROR;
             } else {
                 vm_get_integer_from_bytecode(&compiled_code[(bytecode_t)*num1], 
@@ -350,7 +350,7 @@ int main (int argc, char *argv[])
             num2 = (int *)pop(stk);
             if (num1 == 0 || num2 == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
-                        " in byte number %d", pc);
+                        " in byte number %d, instruction PUT", pc);
                 error_flag = ERROR;
             } else {
                 vm_put_integer_to_bytecode(&compiled_code[(bytecode_t)*num1], 
