@@ -7,9 +7,11 @@
 __CODE__
 
 READ                       # read a decimal number.
-mem_put input              # store it in input label.
+PUSH input                 # store it in input label.
+PUT
 
-mem_get input              # Special cases.
+PUSH input                 # Special cases.
+GET
 PUSH 2                     # if 2 then prime.
 EQU
 jumpif prime
@@ -17,8 +19,10 @@ GRT                        # If less than 2 then not prime.
 jumpif not_prime
 
 :start
-mem_get divisor
-mem_get input
+PUSH divisor
+GET
+PUSH input
+GET
 DIV
 POP                        # Discard the quotient.
 PUSH 0                     # Check if remainder is 0.
@@ -26,13 +30,17 @@ EQU
 POP POP                    # clear the stack
 jumpif not_prime            
 
-mem_get divisor            # Add 1 to the divisor
+PUSH divisor            # Add 1 to the divisor
+GET
 PUSH 1
 ADD
-mem_put divisor
+PUSH divisor
+PUT
 
-mem_get divisor
-mem_get input              # If divisor is not equal to input,
+PUSH divisor
+GET
+PUSH input                 # If divisor is not equal to input
+GET
 EQU                        # continue loop.
 POP POP                    # clear the stack.
 jumpun start

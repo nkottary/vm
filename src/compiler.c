@@ -241,7 +241,7 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                 return FAILURE;
             }
 
-            compiled_code[pc++] = INST_SET[JMP].bytecode;
+            compiled_code[pc++] = INST_SET[IND].bytecode;
             vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
             pc += 4;
 
@@ -253,54 +253,32 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
                 compiled_code[pc] = INST_SET[GOTO].bytecode;
             }
             pc++;
-        } else if (strcmp(token, "mem_get") == 0) {
-            compiled_code[pc++] = INST_SET[MEM].bytecode;
-            tok_list = tok_list->next_tk;
-            line_num = tok_list->line_num;
-            token = tok_list->token;
-
-            const label_t *found_label = 
-                vm_search_label_table(token, label_table, lt_len);
-
-            if (found_label == NULL) {
-                fprintf(stderr, "\nERROR: memget label not found"
-                        " in line number %d", line_num);
-                return FAILURE;
-            }
-            vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
-            pc += 4;
-            compiled_code[pc++] = INST_SET[GET].bytecode;
-        } else if (strcmp(token, "mem_put") == 0) {
-            compiled_code[pc++] = INST_SET[MEM].bytecode;
-            tok_list = tok_list->next_tk;
-            line_num = tok_list->line_num;
-            token = tok_list->token;
-
-            const label_t *found_label = 
-                vm_search_label_table(token, label_table, lt_len);
-
-            if (found_label == NULL) {
-                fprintf(stderr, "\nERROR: Memput label not found"
-                        " in line number %d", line_num);
-                return FAILURE;
-            }
-            vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
-            pc += 4;
-            compiled_code[pc++] = INST_SET[PUT].bytecode;
         } else if (strcmp(token, "PUSH") == 0) {
-            compiled_code[pc++] = INST_SET[PUSH].bytecode;
-
             int arg = 0;
             tok_list = tok_list->next_tk;
             line_num = tok_list->line_num;
             token = tok_list->token;
 
-            if (vm_get_coded_arg(&arg, token) == FAILURE) {
+            if (isalpha(token[0])) {
+                const label_t *found_label = vm_search_label_table(token, 
+                                                                   label_table,
+                                                                   lt_len);
+                if (found_label == NULL) {
+                    fprintf(stderr, "\nError: Label given to PUSH not declared "
+                            " in line number %d", line_num);
+                    return FAILURE;
+                }
+                compiled_code[pc] = INST_SET[IND].bytecode;
+                arg = found_label->id;
+            } else if (vm_get_coded_arg(&arg, token) == FAILURE) {
                 fprintf(stderr, 
                         "\nError: Syntax error in push argument in "
                         "line number %d.", line_num);
                 return FAILURE;
+            } else {
+                compiled_code[pc] = INST_SET[PUSH].bytecode;
             }
+            pc++;
             vm_put_integer_to_bytecode(&compiled_code[pc], arg);
             pc += 4;
         } else {
@@ -327,7 +305,7 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
 
 /**
  * A second pass of compilation, replace LAB with a NOP, 
- * replace JMP and label id with PUSH <pc> GOTO.
+ * replace IND and label id with PUSH <pc> GOTO.
  *
  * @param  compiled_code      Compiled code from first pass.
  * @param  len                Length of the compiled code.
@@ -365,17 +343,14 @@ status_t vm_compile_second_pass (bytecode_t *compiled_code, const int code_len,
         if (compiled_code[i] == INST_SET[PUSH].bytecode) {
             i += 4; /* Skip the argument to PUSH. */
         }
-        else if (compiled_code[i] == INST_SET[JMP].bytecode ||
-                 compiled_code[i] == INST_SET[MEM].bytecode) {
+        else if (compiled_code[i] == INST_SET[IND].bytecode) {
             compiled_code[i++] = INST_SET[PUSH].bytecode;
             assert(i < code_len);
             assert(compiled_code[i] < lt_len);
             compiled_code[i] = label_table[compiled_code[i]].pc;
-            i += 4;  /* +3 because stack elem is 4 byts and in above
+            i += 3;  /* +3 because stack elem is 4 byts and in above
                       * line we have already added 1 byte of pc, 
-                      * +1 because we have a GOTO, GOIF, GOUN, GET or PUT
-                      * instruction anyway.
-                      */
+                      */ 
         }
     }
 

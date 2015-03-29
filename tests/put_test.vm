@@ -1,10 +1,13 @@
 # A test for mem_put 
 :test_mem 123
 __CODE__
-mem_get test_mem
+PUSH test_mem
+GET
 WRTD  
 PUSH 321
-mem_put test_mem
-mem_get test_mem
+PUSH test_mem
+PUT
+PUSH test_mem
+GET
 WRTD
 END

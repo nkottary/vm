@@ -6,6 +6,41 @@
 2. A boolean bit.
 3. A program counter.
 
+## Example hello world program
+
+```
+# Hello world program 
+__CODE__                # start code segment
+# PUSH the string Hello World! in reverse order.
+# 0 indicates end of string.
+PUSH   0                
+PUSH  10                # new line.
+PUSH '!'
+PUSH 'D'
+PUSH 'L'
+PUSH 'R'
+PUSH 'O'
+PUSH 'W'
+PUSH 32                 # space
+PUSH 'O'
+PUSH 'L'
+PUSH 'L'
+PUSH 'E'
+PUSH 'H'
+PUSH  Ah                # new line. (in hexadecimal).
+
+:print                  # A label for decision making/looping.
+PUSH 0
+EQU
+jumpif end              # If top of stack is zero stop printing.
+POP                     # pop the 0.
+WRTC                    # print the character.
+jump print              # loop.
+
+:end
+
+```
+
 ## Instructions without args
 
 ```
@@ -62,14 +97,12 @@ PUSH        - push a byte to top of stack. Byte may
 
 ```
 LAB         - Defines a label at this point.
-JMP         - Defines a jump to a label indexed by the
-              next byte.
-MEM         - Used for indicating mem_get and mem_put.
+IND         - Indirection, defines that next 4 bytes
+              is an address.
 ```
 
 In a second pass of compilation LAB is replaced by NOP
-and JMP is compiled to PUSH <instruction-to-jump-to> 
-GOTO.
+and IND is compiled to PUSH <instruction-to-jump-to>.
 
 ## High level instructions
 
@@ -87,20 +120,6 @@ jumped to with jump <label-name>, for example-
 jump start \# Jump to label 
 ```
 Conditional jumps (jumpif and jumpun) are also available.
-
-### Data segment get and put
-
-To push a data segment value into stack use-
-```
-mem_get label_name
-```
-where label_name is the label in data segment where the 
-value is stored.
-
-To put top of stack value into data segment use-
-```
-mem_put label_name
-```
 
 ## comments
 

@@ -45,8 +45,7 @@ typedef unsigned char bytecode_t;
  * They are not interpreted by the vm.                          \
  */                                                             \
         list_macro(LAB, 0x17),                                  \
-        list_macro(JMP, 0x18),                                  \
-        list_macro(MEM, 0x19),                                  \
+        list_macro(IND, 0x18),                                  \
 /*************************************************************/ \
         list_macro(GET, 0x1A),                                  \
         list_macro(PUT, 0x1B),
