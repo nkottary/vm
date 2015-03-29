@@ -21,9 +21,11 @@ PUSH  Ah                # new line. (in hexadecimal).
 :print                  # A label for decision making/looping.
 PUSH 0
 EQU
-jumpif end              # If top of stack is zero stop printing.
+PUSH &end               # If top of stack is zero stop printing.
+GOIF
 POP                     # pop the 0.
 WRTC                    # print the character.
-jump print              # loop.
+PUSH &print             # loop.
+GOTO
 
 :end

@@ -248,9 +248,13 @@ int main (int argc, char *argv[])
 
         case GOTO:
             stack_val = (int *)pop(stk);
-            if (stack_val == 0 || *stack_val > code_len - 1) {
+            if (stack_val == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
                         " in byte number %d, instruction GOTO", pc);
+                error_flag = ERROR;
+            } else if (*stack_val > code_len - 1) {
+                fprintf(stderr, "\nError: GOTO instruction given"
+                        " out of bounds address in byte number %d", pc);
                 error_flag = ERROR;
             } else {
                 pc = *stack_val - 1;
@@ -260,9 +264,13 @@ int main (int argc, char *argv[])
 
         case GOIF:
             stack_val = (int *)pop(stk);
-            if (stack_val == 0 || *stack_val > code_len - 1) {
+            if (stack_val == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
                         " in byte number %d, instruction GOIF", pc);
+                error_flag = ERROR;
+            } else if (*stack_val > code_len - 1) {
+                fprintf(stderr, "\nError: GOIF instruction given"
+                        " out of bounds address in byte number %d", pc);
                 error_flag = ERROR;
             } else {
                 if (bool_flag == TRUE) {
@@ -274,9 +282,13 @@ int main (int argc, char *argv[])
 
         case GOUN:
             stack_val = (int *)pop(stk);
-            if (stack_val == 0 || *stack_val > code_len - 1) {
+            if (stack_val == 0) {
                 fprintf(stderr, "\nError: Stack underflow error."
                         " in byte number %d, instruction GOUN", pc);
+                error_flag = ERROR;
+            } else if (*stack_val > code_len - 1) {
+                fprintf(stderr, "\nError: GOUN instruction given"
+                        " out of bounds address in byte number %d", pc);
                 error_flag = ERROR;
             } else {
                 if (bool_flag == FALSE) {

@@ -7,43 +7,47 @@
 __CODE__
 
 READ                       # read a decimal number.
-PUSH input                 # store it in input label.
+PUSH &input                 # store it in input label.
 PUT
 
-PUSH input                 # Special cases.
+PUSH &input                 # Special cases.
 GET
 PUSH 2                     # if 2 then prime.
 EQU
-jumpif prime
+PUSH &prime
+GOIF
 GRT                        # If less than 2 then not prime.
-jumpif not_prime
+PUSH &not_prime
+GOIF
 
 :start
-PUSH divisor
+PUSH &divisor
 GET
-PUSH input
+PUSH &input
 GET
 DIV
 POP                        # Discard the quotient.
 PUSH 0                     # Check if remainder is 0.
 EQU                         
 POP POP                    # clear the stack
-jumpif not_prime            
+PUSH &not_prime            
+GOIF
 
-PUSH divisor            # Add 1 to the divisor
+PUSH &divisor            # Add 1 to the divisor
 GET
 PUSH 1
 ADD
-PUSH divisor
+PUSH &divisor
 PUT
 
-PUSH divisor
+PUSH &divisor
 GET
-PUSH input                 # If divisor is not equal to input
+PUSH &input                 # If divisor is not equal to input
 GET
 EQU                        # continue loop.
 POP POP                    # clear the stack.
-jumpun start
+PUSH &start
+GOUN
 
 :prime
 PUSH 0
@@ -52,7 +56,8 @@ PUSH 'm'
 PUSH 'i'
 PUSH 'r'
 PUSH 'p'
-jump print
+PUSH &print
+GOTO
 
 :not_prime
 PUSH 0
@@ -65,15 +70,18 @@ PUSH 32
 PUSH 't'
 PUSH 'o'
 PUSH 'n'
-jump print
+PUSH &print
+GOTO
 
 :print                   # WRTC till TOS is not zero
 PUSH 0
 EQU
-jumpif end
+PUSH &end
+GOIF
 POP
 WRTC
-jump print
+PUSH &print
+GOTO
 
 :end
 END

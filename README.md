@@ -32,13 +32,14 @@ PUSH  Ah                # new line. (in hexadecimal).
 :print                  # A label for decision making/looping.
 PUSH 0
 EQU
-jumpif end              # If top of stack is zero stop printing.
+PUSH &end               # If top of stack is zero stop printing.
+GOIF
 POP                     # pop the 0.
 WRTC                    # print the character.
-jump print              # loop.
+PUSH &print             # loop.
+GOTO
 
 :end
-
 ```
 
 ## Instructions without args
@@ -111,15 +112,26 @@ These instructions are compiled to byte code
 ### Labels:
 
 A label can be defined with the ':' character, and can be 
-jumped to with jump <label-name>, for example-
+jumped to with GOTO, GOIF or GOUN instructions, for example-
 
 ```
 ....code....
 :start  \# Definition of a label.
 ....code....
-jump start \# Jump to label 
+GOTO &start \# Jump to label 
 ```
-Conditional jumps (jumpif and jumpun) are also available.
+To push data from data segment to stack, first push the 
+address to the stack then use GET, for example-
+
+```
+:my_data 123
+__CODE__      
+PUSH &my_data
+GET
+```
+
+Similarly, PUT can be used to write data from the stack
+to the data segment.
 
 ## comments
 

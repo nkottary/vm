@@ -10,10 +10,12 @@ WRTC
 PUSH 20h # space character 
 WRTC
 EQU
-jumpif end
+PUSH &end
+GOIF
 PUSH  1
 ADD
-jump start
+PUSH start
+GOTO
 :end
 PUSH 0Ah # newline
 WRTC

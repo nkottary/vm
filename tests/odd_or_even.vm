@@ -6,7 +6,8 @@ DIV
 POP
 PUSH 00h
 EQU
-jumpif even
+PUSH &even
+GOIF
 PUSH 0Ah
 PUSH 64h
 PUSH 64h

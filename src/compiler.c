@@ -219,47 +219,14 @@ status_t vm_compile_first_pass (bytecode_t *compiled_code, int *len,
              * resolved.
              */
             compiled_code[pc++] = INST_SET[LAB].bytecode;
-        }
-        else if (strncmp(token, "jump", 4) == 0) {
-            jump_t flag = JUMP;
-            if (strcmp(token, "jumpif") == 0) {
-                flag = JUMPIF;
-            } else if (strcmp(token, "jumpun") == 0) {
-                flag = JUMPUN;
-            }
-
-            tok_list = tok_list->next_tk;
-            line_num = tok_list->line_num;
-            token = tok_list->token;
-
-            const label_t *found_label = 
-                vm_search_label_table(token, label_table, lt_len);
-
-            if (found_label == NULL) {
-                fprintf(stderr, "\nERROR: Jump label not found"
-                        " in line number %d", line_num);
-                return FAILURE;
-            }
-
-            compiled_code[pc++] = INST_SET[IND].bytecode;
-            vm_put_integer_to_bytecode(&compiled_code[pc], found_label->id);
-            pc += 4;
-
-            if (flag == JUMPIF) {
-                compiled_code[pc] = INST_SET[GOIF].bytecode;
-            } else if (flag == JUMPUN) {
-                compiled_code[pc] = INST_SET[GOUN].bytecode;
-            } else {
-                compiled_code[pc] = INST_SET[GOTO].bytecode;
-            }
-            pc++;
         } else if (strcmp(token, "PUSH") == 0) {
             int arg = 0;
             tok_list = tok_list->next_tk;
             line_num = tok_list->line_num;
             token = tok_list->token;
 
-            if (isalpha(token[0])) {
+            if (token[0] == '&') {
+                token++;
                 const label_t *found_label = vm_search_label_table(token, 
                                                                    label_table,
                                                                    lt_len);
