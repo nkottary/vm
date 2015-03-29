@@ -45,41 +45,41 @@ GOTO
 ## Instructions without args
 
 ```
-REAH	    - read a hexadecimal byte from stdin 
-	      to top of stack
-READ	    - read a decimal to top of stack.
-REAC	    - read a character to top of stack.
-WRTH 	    - write a hexadecimal byte to stdout.
-WRTD	    - write a decimal to stdout.
-WRTC	    - write a character to stdout.
-ADD 	    - add top 2 elems of stack and put sum
-	      in stack
-SUB 	    - subtract topmost element by 2nd 
-	      topmost element from stack and put
-	      difference in top of stack
-MUL 	    - multiply top 2 elems os stack and 
-	      put product in top of stack
-DIV 	    - Divide topmost elem by 2nd topmost
-	      elem and put quotient in top of 
-	      stack and remainder below top.
-POP 	    - pop topmost elem from stack
-EQU 	    - if top 2 elems are equal boolean 
-	      flag set to 1 else 0
-GRT 	    - is top is greater than second top 
-	      boolean flag set to 1 else 0
-LST 	    - is top is smaller than second top 
-	      boolean flag set to 1 else 0
-GOTO 	    - go to instruction number given by 
-	      top of stack.
+REAH        - read a hexadecimal byte from stdin 
+              to top of stack
+READ        - read a decimal to top of stack.
+REAC        - read a character to top of stack.
+WRTH        - write a hexadecimal byte to stdout.
+WRTD        - write a decimal to stdout.
+WRTC        - write a character to stdout.
+ADD         - add top 2 elems of stack and put sum
+              in stack
+SUB         - subtract topmost element by 2nd 
+              topmost element from stack and put
+              difference in top of stack
+MUL         - multiply top 2 elems os stack and 
+              put product in top of stack
+DIV         - Divide topmost elem by 2nd topmost
+              elem and put quotient in top of 
+              stack and remainder below top.
+POP         - pop topmost elem from stack
+EQU         - if top 2 elems are equal boolean 
+              flag set to 1 else 0
+GRT         - is top is greater than second top 
+              boolean flag set to 1 else 0
+LST         - is top is smaller than second top 
+              boolean flag set to 1 else 0
+GOTO        - go to instruction number given by 
+               top of stack.
 GOIF        - like GOTO but only if boolean flag 
-	      set.
+              set.
 GOUN        - like GOTO but only if boolean flag 
-	      not set.
-END	    - end execution.
+              not set.
+END         - end execution.
 DUP         - Duplicate the topmost element on 
-	      the stack.
+              the stack.
 FLIP        - Flip the top two elements on the 
-	      stack.
+              stack.
 GET         - Push the element at data segment 
               address given by the top of stack.
 PUT         - Put the second in top of stack to 
@@ -105,11 +105,7 @@ IND         - Indirection, defines that next 4 bytes
 In a second pass of compilation LAB is replaced by NOP
 and IND is compiled to PUSH <instruction-to-jump-to>.
 
-## High level instructions
-
-These instructions are compiled to byte code
-
-### Labels:
+## Labels
 
 A label can be defined with the ':' character, and can be 
 jumped to with GOTO, GOIF or GOUN instructions, for example-
