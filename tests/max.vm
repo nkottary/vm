@@ -1,0 +1,54 @@
+# Find the maximum in an array of numbers terminated by 0.
+:nums
+        1 50 6 700 8 9 800 8 6 74 5 3 0
+:max
+        -1
+__CODE__
+
+PUSH &nums                      # Put the first number to max.
+DUP
+GET
+PUSH 0
+EQU
+POP
+PUSH &end
+GOIF
+PUSH &max
+PUT
+
+# TOS is &nums
+
+:start
+
+PUSH 4                      # get the next number.
+ADD
+DUP
+GET
+
+PUSH 0
+EQU
+POP
+PUSH &end
+GOIF
+
+PUSH &max
+GET
+LST
+POP
+PUSH &replace
+GOIF
+POP
+PUSH &start
+GOTO
+
+:replace
+PUSH &max
+PUT
+PUSH &start
+GOTO
+
+:end
+PUSH &max
+GET
+WRTD
+END
