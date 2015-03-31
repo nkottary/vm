@@ -1,21 +1,21 @@
-# Print numbers from 1 to 10 
+# Simple loop implementation using labels
 __CODE__
-PUSH  Ah
-PUSH  1h
+PUSH 10
+PUSH  1
 :start
-DUP       
+DUP
 WRTD
-PUSH 2Ch
+PUSH ','
 WRTC
-PUSH 20h
+PUSH ' '
 WRTC
 EQU
 PUSH &end
 GOIF
-PUSH  1h
+PUSH  1
 ADD
-PUSH &start
+PUSH start
 GOTO
 :end
-PUSH  Ah  
+PUSH 0Ah # newline
 WRTC

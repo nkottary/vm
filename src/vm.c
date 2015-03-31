@@ -339,7 +339,7 @@ int main (int argc, char *argv[])
             pc += 4;
             assert(pc < code_len);
             if (push(stk, (void *)stack_val) == FAILURE) {
-                fprintf(stderr, "\nError: Stack underflow error."
+                fprintf(stderr, "\nError: Stack overflow error."
                         " in byte number %d, instruction PUSH", pc);
                 error_flag = ERROR;
             }
