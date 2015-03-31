@@ -2,9 +2,9 @@
 
 rm *.vmc
 
-declare -a fnames=("echo.vm" "hw.vm" "loop.vm" "odd_or_even.vm")
-declare -a inputs=("123" "" "" "32")
-declare -a outputs=("123" $'\nHELLO WORLD!' $'1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ' $'Even')
+declare -a fnames=("echo.vm" "hw.vm" "loop.vm" "odd_or_even.vm" "prime.vm" "max.vm")
+declare -a inputs=("123" "" "" "32" "31" "")
+declare -a outputs=($'123' $'\nHELLO WORLD!' $'1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ' $'Even' $'prime' $'800')
 
 #compilation
 for fname in "${fnames[@]}"
