@@ -7,14 +7,14 @@ DUP
 WRTD
 PUSH ','
 WRTC
-PUSH ' '
+PUSH 32 # space
 WRTC
 EQU
 PUSH &end
 GOIF
 PUSH  1
 ADD
-PUSH start
+PUSH &start
 GOTO
 :end
 PUSH 0Ah # newline

@@ -127,6 +127,8 @@ status_t vm_get_coded_arg (int *arg, const char *token) {
     assert(arg != NULL);
     assert(token != NULL);
 
+    int rc = 0;
+
     const int len = strlen(token);
     if (token[0] == '\'') {
         if (len != 3 || token[2] != '\'') {
@@ -137,9 +139,21 @@ status_t vm_get_coded_arg (int *arg, const char *token) {
         char scan_token[MAX_LINE_LEN];
         strncpy(scan_token, token, len);
         scan_token[len - 1] = '\0';
-        sscanf(scan_token, "%x", arg);
+        rc = sscanf(scan_token, "%x", arg);
+        if (rc != 1) {
+            fprintf(stderr, 
+                    "\nError: Unable to read hexadecimal value given"
+                    " as argument to push");
+            return FAILURE;
+        }
     } else {
-        sscanf(token, "%d", arg);                    
+        rc = sscanf(token, "%d", arg);
+        if (rc != 1) {
+            fprintf(stderr, 
+                    "\nError: Unable to read decimal value given"
+                    " as argument to push");
+            return FAILURE;
+        }
     }
     return SUCCESS;
 }
