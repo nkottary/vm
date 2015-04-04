@@ -7,10 +7,10 @@
 __CODE__
 
 READ                       # read a decimal number.
-PUSH &input                 # store it in input label.
+PUSH &input                # store it in input label.
 PUT
 
-PUSH &input                 # Special cases.
+PUSH &input                # Special cases.
 GET
 PUSH 2                     # if 2 then prime.
 EQU
@@ -20,36 +20,38 @@ GRT                        # If less than 2 then not prime.
 PUSH &not_prime
 GOIF
 
-:start
 PUSH &divisor
 GET
+
+:start
+
+DUP
+
 PUSH &input
 GET
 DIV
 POP                        # Discard the quotient.
 PUSH 0                     # Check if remainder is 0.
 EQU                         
-POP POP                    # clear the stack
+POP POP                    # clear 0 and the remainder.
+                           # TOS is now divisor.
 PUSH &not_prime            
 GOIF
 
-PUSH &divisor            # Add 1 to the divisor
-GET
-PUSH 1
+PUSH 1                     # Add 1 to the divisor.
 ADD
-PUSH &divisor
-PUT
 
-PUSH &divisor
-GET
-PUSH &input                 # If divisor is not equal to input
+PUSH &input                # If divisor is not equal to input
 GET
 EQU                        # continue loop.
-POP POP                    # clear the stack.
+POP                        # remove input from stack.
+                           # TOS is now divisor.
 PUSH &start
 GOUN
 
 :prime
+# call print with argument 'prime'
+PUSH &end
 PUSH 0
 PUSH 'e'
 PUSH 'm'
@@ -60,6 +62,8 @@ PUSH &print
 GOTO
 
 :not_prime
+# call print with argument 'not prime'
+PUSH &end
 PUSH 0
 PUSH 'e'
 PUSH 'm'
@@ -73,15 +77,20 @@ PUSH 'n'
 PUSH &print
 GOTO
 
-:print                   # WRTC till TOS is not zero
-PUSH 0
-EQU
-PUSH &end
-GOIF
-POP
-WRTC
-PUSH &print
-GOTO
-
 :end
 END
+
+##########    PRINT SUBROUTINE   ###########
+:print                 
+PUSH 0
+EQU
+POP                     # pop the 0.
+PUSH &ret               # If top of stack is zero stop printing.
+GOIF
+WRTC                    # print the character.
+PUSH &print             # loop.
+GOTO
+
+:ret
+POP                     # POP the 0.
+GOTO                    # TOS is return address, so go to it.

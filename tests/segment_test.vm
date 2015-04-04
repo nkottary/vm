@@ -1,7 +1,0 @@
-# A test to check if data segment works 
-:int_val 55
-__CODE__             # code segment starts here
-PUSH int_val
-GET
-WRTD
-END

@@ -3,29 +3,48 @@ __CODE__
 PUSH 02h
 READ
 DIV
-POP
-PUSH 00h
-EQU
+POP        # discard the quotient.
+PUSH 00h 
+EQU        # compare with 0.
 PUSH &even
 GOIF
-PUSH 0Ah
-PUSH 64h
-PUSH 64h
-PUSH 4Fh
-WRTC
-WRTC
-WRTC
-WRTC
-END
+
+# call print with argument Odd
+PUSH &end
+PUSH 0
+PUSH 0Ah # new line
+PUSH 'd'
+PUSH 'd'
+PUSH 'O'
+PUSH &print
+GOTO
+
 :even
-PUSH 0Ah
-PUSH 6Eh
-PUSH 65h
-PUSH 76h
-PUSH 45h
-WRTC
-WRTC
-WRTC
-WRTC
-WRTC
+# call print with argument Even
+PUSH &end
+PUSH 0
+PUSH 0Ah # new line
+PUSH 'n'
+PUSH 'e'
+PUSH 'v'
+PUSH 'E'
+PUSH &print
+GOTO
+
+:end
 END
+
+##########    PRINT SUBROUTINE   ###########
+:print                 
+PUSH 0
+EQU
+POP                     # pop the 0.
+PUSH &ret               # If top of stack is zero stop printing.
+GOIF
+WRTC                    # print the character.
+PUSH &print             # loop.
+GOTO
+
+:ret
+POP                     # POP the 0.
+GOTO                    # TOS is return address, so go to it.
