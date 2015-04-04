@@ -14,12 +14,6 @@
 #include "headers/enums.h"
 #include "headers/lexer.h"
 
-typedef enum JUMP_T {
-    JUMP,
-    JUMPIF,
-    JUMPUN
-} jump_t;
-
 typedef struct LABEL_T {
     char label[LABEL_LEN];
     bytecode_t line_num;
@@ -404,5 +398,5 @@ int main (int argc, char *argv[])
     fwrite(compiled_code, sizeof (bytecode_t), code_len, fp);
     fclose(fp);  
 
-    return exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }

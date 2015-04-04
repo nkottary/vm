@@ -9,6 +9,7 @@
 #include <string.h>
 #include <malloc.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include "headers/constants.h"
 #include "headers/stack.h"
@@ -384,8 +385,8 @@ int main (int argc, char *argv[])
     }
     freeStack(stk);
     if (error_flag == ERROR) {
-        return exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
-    return exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
