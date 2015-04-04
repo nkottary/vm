@@ -383,6 +383,9 @@ int main (int argc, char *argv[])
         }
     }
     freeStack(stk);
-    return 0;
+    if (error_flag == ERROR) {
+        return exit(EXIT_FAILURE);
+    }
+    return exit(EXIT_SUCCESS);
 }
 

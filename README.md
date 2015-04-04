@@ -13,6 +13,7 @@
 __CODE__                # start code segment
 # PUSH the string Hello World! in reverse order.
 # 0 indicates end of string.
+PUSH &end               # the return address.
 PUSH   0                
 PUSH  10                # new line.
 PUSH '!'
@@ -28,16 +29,25 @@ PUSH 'L'
 PUSH 'E'
 PUSH 'H'
 PUSH  Ah                # new line. (in hexadecimal).
+PUSH &print             # call print function.
+GOTO
+:end
+END
 
-:print                  # A label for decision making/looping.
+##########    PRINT SUBROUTINE   ###########
+:print                 
 PUSH 0
 EQU
-PUSH &end               # If top of stack is zero stop printing.
-GOIF
 POP                     # pop the 0.
+PUSH &ret               # If top of stack is zero stop printing.
+GOIF
 WRTC                    # print the character.
 PUSH &print             # loop.
 GOTO
+
+:ret
+POP                     # POP the 0.
+GOTO                    # TOS is return address, so go to it.
 
 :end
 ```

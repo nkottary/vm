@@ -404,5 +404,5 @@ int main (int argc, char *argv[])
     fwrite(compiled_code, sizeof (bytecode_t), code_len, fp);
     fclose(fp);  
 
-    return 0;
+    return exit(EXIT_SUCCESS);
 }
